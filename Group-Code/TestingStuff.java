@@ -14,8 +14,12 @@ public class TestingStuff {
         ArrayList<Cluster> doubletons = clusters.getXtons(2);
         ArrayList<Cluster> biggerClusters = clusters.getClustersExSingletons();
 
+        Move move = new Move(board, xDim, yDim, 0);
+
         printBoard(board, xDim, yDim);
         biggestCluster.print();
+        System.out.println();
+        move.print();
         System.out.println();
     }
 
