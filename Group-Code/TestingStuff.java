@@ -7,12 +7,12 @@ public class TestingStuff {
         int yDim = 15;
         byte[] board = generateBoard(xDim, yDim);
 
-        Clusters clusters = new Clusters(board, xDim, yDim,0);
-        ArrayList<Cluster> foundClusters = clusters.getFeatures();
-        Cluster biggestCluster = clusters.getBiggestCluster();
-        ArrayList<Cluster> singletons = clusters.getXtons(1);
-        ArrayList<Cluster> doubletons = clusters.getXtons(2);
-        ArrayList<Cluster> biggerClusters = clusters.getClustersExSingletons();
+        Clusters clusters = new Clusters(board, xDim, yDim, 0);
+        ArrayList<ArrayList<Cluster>> foundClusters = clusters.getFeatures();
+        Cluster biggestCluster = clusters.getBiggestCluster(0);
+        ArrayList<Cluster> singletons = clusters.getXtons(1, 0);
+        ArrayList<Cluster> doubletons = clusters.getXtons(2, 0);
+        ArrayList<Cluster> biggerClusters = clusters.getClustersExSingletons(0);
 
         Move move = new Move(board, xDim, yDim, 0);
 
