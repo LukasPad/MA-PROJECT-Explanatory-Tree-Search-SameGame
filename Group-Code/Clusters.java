@@ -3,14 +3,15 @@ import java.util.Arrays;
 
 public class Clusters extends BoardFeatures {
 
-    ArrayList<Cluster> clusters = new ArrayList<>();
+    ArrayList<ArrayList<Cluster>> history = new ArrayList();
 
-    public Clusters(byte[] searchSpace, int xDim, int yDim, int moveNum){
-        findFeatures(searchSpace, xDim, yDim, moveNum);
+    public Clusters(byte[] searchSpace, int xDim, int yDim, int time){
+        findFeatures(searchSpace, xDim, yDim, time);
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int moveNum) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int time) {
+        ArrayList<Cluster> clusters = new ArrayList<>();
         byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         for (int i = 0; i < searchSpace.length; i++) {
             if (tempBoard[i] != -1) {
@@ -37,9 +38,10 @@ public class Clusters extends BoardFeatures {
                 int width = mostWidth - leastWidth + 1;
                 int height = mostHeight - leastHeight + 1;
                 byte color = searchSpace[i];
-                clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim));
+                clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim, time));
             }
         }
+        history.add(clusters);
         return clusters;
     }
 
@@ -79,22 +81,35 @@ public class Clusters extends BoardFeatures {
         }
     }
 
-    public ArrayList<Cluster> getFeatures(){ return this.clusters;}
-    public ArrayList<Cluster> getClusters(){ return this.clusters;}
+    public ArrayList<ArrayList<Cluster>> getFeatures(){ return this.history;}
 
-    public ArrayList<Cluster> getClustersExSingletons(){
-        ArrayList<Cluster> found = new ArrayList<>();
-        for(Cluster cluster : clusters){
-            if (cluster.numCells != 1){
-                found.add(cluster);
+    public ArrayList<Cluster> getClusters(int time){
+        for (ArrayList<Cluster> cluster : this.history){
+            if(cluster.get(0).time == time){
+                return cluster;
             }
         }
-        return found;
+        return null;
     }
 
-    public ArrayList<Cluster> getXtons(int i){
+    public ArrayList<Cluster> getClustersExSingletons(int time){
+        ArrayList<Cluster> clusterList = this.getClusters(time);
+        if(clusterList != null){
+            ArrayList<Cluster> found = new ArrayList<>();
+            for(Cluster cluster : clusterList){
+                if (cluster.numCells != 1){
+                    found.add(cluster);
+                }
+            }
+            return found;
+        }
+        return null;
+    }
+
+    public ArrayList<Cluster> getXtons(int i, int time){
+        ArrayList<Cluster> clusterList = this.getClusters(time);
         ArrayList<Cluster> singletons = new ArrayList<>();
-        for(Cluster cluster : clusters){
+        for(Cluster cluster : clusterList){
             if (cluster.numCells == i){
                 singletons.add(cluster);
             }
@@ -102,9 +117,11 @@ public class Clusters extends BoardFeatures {
         return singletons;
     }
 
-    public Cluster getBiggestCluster(){
-        Cluster biggest = clusters.get(0);
-        for(Cluster cluster : clusters){
+    public Cluster getBiggestCluster(int time){
+        ArrayList<Cluster> clusterList = this.getClusters(time);
+
+        Cluster biggest = clusterList.get(0);
+        for(Cluster cluster : clusterList){
             if (cluster.numCells > biggest.numCells){
                 biggest = cluster;
             }
