@@ -58,5 +58,12 @@ public class Columns extends BoardFeatures {
 	public Column getShortest() {return this.shortest;}
 	public int getShortestColumnHeight() {return this.shortestColumnHeight;}
 	public ArrayList<Column> getColumns() {return this.columns;}
+	public int numberOfEmptyColumns() {
+		int counter = 0;
+		for (int i = 0; i < columns.size(); i++) {
+			if (columns.get(i).getHeight() == 0) {counter++;}
+		}
+		return counter;
+	}
 
 }
