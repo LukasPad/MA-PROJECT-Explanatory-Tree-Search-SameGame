@@ -21,6 +21,22 @@ public class TestingStuff {
         System.out.println();
         move.print();
         System.out.println();
+        
+        Columns columns = new Columns(board, xDim, yDim,0);
+        columns.printColumns();
+        System.out.println();
+        System.out.println("Shortest column:");
+        columns.getShortest().printColumn();
+        System.out.println("of size:"+columns.getShortestColumnHeight());
+        System.out.println();
+        System.out.println("number of colors in column 4");
+        System.out.println(columns.getColumns().get(3).getColorCount());
+        System.out.println(columns.getColumns().get(3).getColors());
+        System.out.println();
+        System.out.println("number of colors in column 9");
+        System.out.println(columns.getColumns().get(8).getColorCount());
+        System.out.println(columns.getColumns().get(8).getColors());
+
     }
 
     public static byte[] generateBoard(int xDim, int yDim){
