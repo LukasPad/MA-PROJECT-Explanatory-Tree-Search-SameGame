@@ -10,8 +10,9 @@ public class Cluster extends Feature{
     int height;
     int width;
     double[] middleLocation = new double[2];
+    int time;
 
-    public Cluster(byte color, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim) {
+    public Cluster(byte color, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time) {
         this.color = color;
         this.shape = shape;
         this.numCells = numCells;
@@ -19,6 +20,7 @@ public class Cluster extends Feature{
         this.width = width;
         this.xDim = xDim;
         this.yDim = yDim;
+        this.time = time;
         findMiddle();
     }
 
