@@ -10,8 +10,8 @@ public class Columns extends BoardFeatures {
     Column shortest;
     int shortestColumnHeight = 0;
 
-	public Columns(byte[] searchSpace, int xDim, int yDim, int moveNum) {
-		findFeatures(searchSpace, xDim, yDim, moveNum);
+	public Columns(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
+		findFeatures(searchSpace, xDim, yDim, gameStep, move);
 	}
 	
 	/**
@@ -20,7 +20,7 @@ public class Columns extends BoardFeatures {
 	 * @return all columns ordered left to right on the board
 	 */
 	@Override
-	public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int moveNum) {
+	public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
 		for (int i = 0; i < xDim; i++) {
 			byte[] columnSpace = new byte[yDim];
 			for (int j = 0; j < yDim; j++) {

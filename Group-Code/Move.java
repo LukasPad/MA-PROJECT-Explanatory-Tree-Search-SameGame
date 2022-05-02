@@ -6,17 +6,17 @@ public class Move extends BoardFeatures{
     private int location, numRemovedCells, numRemovedColumns;
     private byte color;
 
-    public Move(byte[] searchSpace, int xDim, int yDim, int moveNum){
-        findFeatures(searchSpace, xDim, yDim, moveNum);
+    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move){
+        findFeatures(searchSpace, xDim, yDim, gameStep, move);
     }
 
     @Override
-    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int moveNum) {
-        location = moveNum;
-        color = searchSpace[moveNum];
+    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
+        location = gameStep;
+        color = searchSpace[gameStep];
 
         byte[] boardCopy = Arrays.copyOf(searchSpace, searchSpace.length);
-        getRemovedCellsColumns(boardCopy, xDim, yDim, moveNum, color);
+        getRemovedCellsColumns(boardCopy, xDim, yDim, gameStep, color);
 
         return new ArrayList<>(Collections.singleton(this));
     }

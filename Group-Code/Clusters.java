@@ -5,12 +5,12 @@ public class Clusters extends BoardFeatures {
 
     ArrayList<ArrayList<Cluster>> history = new ArrayList();
 
-    public Clusters(byte[] searchSpace, int xDim, int yDim, int time){
-        findFeatures(searchSpace, xDim, yDim, time);
+    public Clusters(byte[] searchSpace, int xDim, int yDim, int time, int move){
+        findFeatures(searchSpace, xDim, yDim, time, move);
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int time) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
         ArrayList<Cluster> clusters = new ArrayList<>();
         byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         for (int i = 0; i < searchSpace.length; i++) {
@@ -38,7 +38,7 @@ public class Clusters extends BoardFeatures {
                 int width = mostWidth - leastWidth + 1;
                 int height = mostHeight - leastHeight + 1;
                 byte color = searchSpace[i];
-                clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim, time));
+                clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim, gameStep));
             }
         }
         history.add(clusters);
