@@ -4,24 +4,28 @@ import java.util.Collections;
 
 public class Move extends BoardFeatures{
     private int location, numRemovedCells, numRemovedColumns;
+    int gameStep;
     private byte color;
 
     public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move){
-        findFeatures(searchSpace, xDim, yDim, gameStep, move);
+        // findFeatures(searchSpace, xDim, yDim, gameStep, move);
     }
 
     @Override
     public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
-        location = gameStep;
-        color = searchSpace[gameStep];
+        location = move;
+        color = searchSpace[move];
+        this.gameStep = gameStep;
 
         byte[] boardCopy = Arrays.copyOf(searchSpace, searchSpace.length);
-        getRemovedCellsColumns(boardCopy, xDim, yDim, gameStep, color);
+        getRemovedCellsColumns(boardCopy, xDim, yDim, move);
 
-        return new ArrayList<>(Collections.singleton(this));
+        ArrayList<Move> res = new ArrayList<>();
+        res.add(this);
+        return res;
     }
 
-    private void getRemovedCellsColumns(byte[] searchSpace, int xDim, int yDim, int pos, int color) {
+    private void getRemovedCellsColumns(byte[] searchSpace, int xDim, int yDim, int pos) {
         int xChoice = pos % xDim;
         int yChoice = pos / xDim;
 
