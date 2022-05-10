@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Column extends Feature {
 
 	byte[] column;
-	int height;
+	int height = 0;
 	ArrayList<Integer> colors = new ArrayList<>();
 	int colorCount = 0;
 	
@@ -18,12 +18,12 @@ public class Column extends Feature {
 		
 	public void attributes() {
 		boolean empty = false;
-		if((int) column[0] == 0) {
+		if((int) column[0] == -1) {
 			return;
 		}
 		for (int i = 0; i < column.length; i++) {
 			if(!empty) {
-				if(i > 0 && (int) column[i] == 0) {
+				if(i > 0 && (int) column[i] == -1) {
 					this.height = i;
 					empty = true;
 					break;
@@ -41,7 +41,7 @@ public class Column extends Feature {
 				}
 			}
 		}
-		if(this.height == 0) {this.height = column.length;}
+		if(this.height == -1) {this.height = column.length;}
 		
 	}
 
