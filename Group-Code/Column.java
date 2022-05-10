@@ -6,12 +6,14 @@ import java.util.ArrayList;
 
 public class Column extends Feature {
 
+	int gameStep;
 	byte[] column;
 	int height = 0;
 	ArrayList<Integer> colors = new ArrayList<>();
 	int colorCount = 0;
 	
-	public Column(byte[] columnSpace) {
+	public Column(byte[] columnSpace, int gameStep) {
+		this.gameStep = gameStep;
 		this.column = columnSpace;
 		attributes();
 	}

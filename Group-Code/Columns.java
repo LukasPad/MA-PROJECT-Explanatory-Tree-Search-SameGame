@@ -28,7 +28,7 @@ public class Columns extends BoardFeatures {
 			for (int j = 0; j < yDim; j++) {
 				columnSpace[yDim - 1 - j] = searchSpace[j*xDim + i];
 			}
-			columns.add(new Column(columnSpace));
+			columns.add(new Column(columnSpace, gameStep));
 		}
 		int shortestColumnHeight = 0;
 		Column shortest = columns.get(0);
@@ -48,21 +48,51 @@ public class Columns extends BoardFeatures {
 		return columns;
 	}
 
-	public ArrayList getFeatures() {
+	public ArrayList<ArrayList<Column>> getFeatures() {
 		return this.history;
 	}
 	
 	public void printColumns(int gameStep) {
-		for (int i = 0; i < history.get(gameStep).size(); i++) {
+		ArrayList<Column> columns = getColumns(gameStep);
+		for (int i = 0; i < columns.size(); i++) {
 			System.out.print("Column "+(i+1)+": ");
-			history.get(gameStep).get(i).printColumn();
+			columns.get(i).printColumn();
 		}
 	}
 	
-	public Column getShortest(int gameStep) {return this.shortestHistory.get(gameStep);}
-	public int getShortestColumnHeight(int gameStep) {return this.shortestColumnHeightHistory.get(gameStep);}
-	public ArrayList<Column> getColumns(int gameStep) {return this.history.get(gameStep);}
-	public int numberOfEmptyColumns(int gameStep) {
+	public Column getShortest(int gameStep) {
+		int ind = getColumnsIndex(gameStep);
+		if(ind != -1) {return this.shortestHistory.get(ind);}
+		return null;
+	}
+	
+	public int getShortestColumnHeight(int gameStep) {
+		int ind = getColumnsIndex(gameStep);
+		if(ind != -1) {return this.shortestColumnHeightHistory.get(ind);}
+	return -1;
+	}
+	
+	public ArrayList<Column> getColumns(int gameStep){
+        for (ArrayList<Column> column : this.history){
+            if(column.get(0).gameStep == gameStep){
+                return column;
+            }
+        }
+        return null;
+    }	
+	
+	public int getColumnsIndex(int gameStep){
+		int cn = 0;
+        for (ArrayList<Column> column : this.history){
+            if(column.get(0).gameStep == gameStep){
+                return cn;
+            }
+            cn++;
+        }
+        return -1;
+    }	
+    
+    public int numberOfEmptyColumns(int gameStep) {
 		int counter = 0;
 		for (int i = 0; i < history.get(gameStep).size(); i++) {
 			if (history.get(gameStep).get(i).getHeight() == 0) {counter++;}
