@@ -9,7 +9,7 @@ public class Move extends BoardFeatures{
     int[] columnRange = new int[2];
 
     public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move){
-        // findFeatures(searchSpace, xDim, yDim, gameStep, move);
+        findFeatures(searchSpace, xDim, yDim, gameStep, move);
     }
 
     @Override
@@ -35,22 +35,22 @@ public class Move extends BoardFeatures{
         this.columnRange[1] = pos%xDim;
         ArrayList<Integer> dissapearingColumns = new ArrayList<>();
         
-
         // get already removed columns
         numRemovedColumns = 0;
-        for (int row = 0; row < yDim; row++) {
+        for (int col = 0; col < xDim; col++) {
             boolean emptyColumn = true;
-            for (int col = 0; col < xDim; col++) {
-                if (searchSpace[col*xDim + row] != (byte) -1){
+            for (int row = 0; row < yDim; row++) {
+                if (searchSpace[row*xDim + col] != (byte) -1){
                     emptyColumn = false;
                     break;
                 }
             }
             
-//            if (emptyColumn) {
+            if (emptyColumn) {
 //            	dissapearingColumns.add(col);
-//            	numRemovedColumns--;
-//            }
+                // System.out.println("column was removed");
+            	numRemovedColumns--;
+            }
         }
         
 
@@ -63,16 +63,18 @@ public class Move extends BoardFeatures{
         if ((yChoice<yDim - 1)&&(searchSpace[pos+xDim]==color)) checkMoveDown(searchSpace, xDim, yDim, pos+xDim,xChoice,yChoice+1);
 
         // get #removed columns
-        for (int row = 0; row < yDim; row++) {
+        for (int col = 0; col < xDim; col++) {
             boolean emptyColumn = true;
-            for (int col = 0; col < xDim; col++) {
-                if (searchSpace[col*xDim + row] != (byte) -1){
+            for (int row = 0; row < yDim; row++) {
+                if (searchSpace[row*xDim + col] != (byte) -1){
                     emptyColumn = false;
                     break;
                 }
             }
-            
-            if (emptyColumn) numRemovedColumns++;
+            if (emptyColumn) {
+                // System.out.println("column removed");
+                numRemovedColumns++;
+            }
         }
     }
 
