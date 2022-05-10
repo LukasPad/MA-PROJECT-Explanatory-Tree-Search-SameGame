@@ -6,6 +6,7 @@ public class Move extends BoardFeatures{
     private int location, numRemovedCells, numRemovedColumns;
     int gameStep;
     private byte color;
+    int[] columnRange = new int[2];
 
     public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move){
         // findFeatures(searchSpace, xDim, yDim, gameStep, move);
@@ -28,6 +29,12 @@ public class Move extends BoardFeatures{
     private void getRemovedCellsColumns(byte[] searchSpace, int xDim, int yDim, int pos) {
         int xChoice = pos % xDim;
         int yChoice = pos / xDim;
+        
+        // setup for finding created/destroyed connections
+        this.columnRange[0] = pos%xDim;
+        this.columnRange[1] = pos%xDim;
+        ArrayList<Integer> dissapearingColumns = new ArrayList<>();
+        
 
         // get already removed columns
         numRemovedColumns = 0;
@@ -39,9 +46,13 @@ public class Move extends BoardFeatures{
                     break;
                 }
             }
-
-            if (emptyColumn) numRemovedColumns--;
+            
+//            if (emptyColumn) {
+//            	dissapearingColumns.add(col);
+//            	numRemovedColumns--;
+//            }
         }
+        
 
         // get #removed cells
         numRemovedCells = 1;
@@ -60,7 +71,7 @@ public class Move extends BoardFeatures{
                     break;
                 }
             }
-
+            
             if (emptyColumn) numRemovedColumns++;
         }
     }
@@ -68,6 +79,7 @@ public class Move extends BoardFeatures{
     private void checkMoveLeft(byte[] searchSpace, int xDim, int yDim, int pos, int xChoice, int yChoice) {
         numRemovedCells++;
         searchSpace[pos] = (byte)-1;
+        if(pos%xDim < this.columnRange[0]) {this.columnRange[0] = pos%xDim;}
         if ((xChoice>0)&&(searchSpace[pos-1]==color)) checkMoveLeft(searchSpace, xDim, yDim, pos-1,xChoice-1,yChoice);
         if ((yChoice>0)&&(searchSpace[pos-xDim]==color)) checkMoveUp(searchSpace, xDim, yDim, pos-xDim,xChoice,yChoice-1);
         // if ((xChoice<xDim - 1)&&(searchSpace[pos+1]==color)) makeMoveRight(searchSpace, xDim, yDim, pos+1,xChoice+1,yChoice);
@@ -77,6 +89,7 @@ public class Move extends BoardFeatures{
     private void checkMoveRight(byte[] searchSpace, int xDim, int yDim, int pos, int xChoice, int yChoice) {
         numRemovedCells++;
         searchSpace[pos] = (byte)-1;
+        if(pos%xDim > this.columnRange[1]) {this.columnRange[1] = pos%xDim;}
         // if ((xChoice>0)&&(searchSpace[pos-1]==color)) makeMoveLeft(searchSpace, xDim, yDim, pos-1,xChoice-1,yChoice);
         if ((yChoice>0)&&(searchSpace[pos-xDim]==color)) checkMoveUp(searchSpace, xDim, yDim, pos-xDim,xChoice,yChoice-1);
         if ((xChoice<xDim - 1)&&(searchSpace[pos+1]==color)) checkMoveRight(searchSpace, xDim, yDim, pos+1,xChoice+1,yChoice);
