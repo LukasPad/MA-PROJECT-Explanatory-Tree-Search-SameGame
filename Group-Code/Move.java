@@ -247,6 +247,17 @@ public class Move extends BoardFeatures{
         return new ArrayList<>(Collections.singleton(this));
     }
 
+    @Override
+    public String toJSON() {
+        // TODO: build json string
+        return null;
+    }
+
+    @Override
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
     public int getLocation() {
         return location;
     }
