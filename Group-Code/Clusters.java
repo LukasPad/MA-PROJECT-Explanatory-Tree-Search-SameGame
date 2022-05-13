@@ -5,6 +5,8 @@ public class Clusters extends BoardFeatures {
 
     ArrayList<ArrayList<Cluster>> history = new ArrayList();
 
+    public Clusters(){}
+
     public Clusters(byte[] searchSpace, int xDim, int yDim, int time, int move){
         findFeatures(searchSpace, xDim, yDim, time, move);
     }

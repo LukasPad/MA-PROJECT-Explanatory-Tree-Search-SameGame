@@ -10,6 +10,8 @@ public class Columns extends BoardFeatures {
     ArrayList<Column> shortestHistory = new ArrayList<>();
     ArrayList<Integer> shortestColumnHeightHistory = new ArrayList<>();
 
+	public Columns() {}
+
 	public Columns(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
 		findFeatures(searchSpace, xDim, yDim, gameStep, move);
 	}
