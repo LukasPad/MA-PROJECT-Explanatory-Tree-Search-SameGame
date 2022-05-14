@@ -1,3 +1,5 @@
+package GroupCode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import static java.lang.Math.min;
@@ -26,8 +28,8 @@ public class PlayableArea extends BoardFeatures {
             if (searchSpace[i] > empty) {
 //                ArrayList<Integer> clusterShape = new ArrayList<>();
                 playableboard.add(i);
-                
-                color.set(searchSpace[i], color.get(searchSpace[i]) + 1); 
+
+                color.set(searchSpace[i], color.get(searchSpace[i]) + 1);
 //                System.out.println("current colors " + color);
             }
         }
@@ -54,7 +56,7 @@ public class PlayableArea extends BoardFeatures {
         playablearea.add(new Area(color, playableboard, playableboard.size(), height, width, xDim, yDim));
         return playablearea;
     }
-    
+
     public ArrayList findEmpty(byte[] searchSpace, int xDim, int yDim, int moveNum) {
 //        byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         int empty = 0;
@@ -101,13 +103,13 @@ public class PlayableArea extends BoardFeatures {
         Area playarea = playablearea.get(0);
         return playarea;
     }
-   
+
     public Area getEmptyArea(){
         Area emarea = emptyarea.get(0);
         return emarea;
     }
-    
-    
+
+
 //    public static void printBoard(byte[] board, int xDim, int yDim){
 //        for (int j=0;j<yDim;j++)
 //        {
@@ -118,5 +120,5 @@ public class PlayableArea extends BoardFeatures {
 //        System.out.println();
 //    }
 
-   
+
 }

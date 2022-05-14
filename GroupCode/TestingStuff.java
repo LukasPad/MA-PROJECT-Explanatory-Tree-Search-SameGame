@@ -1,3 +1,5 @@
+package GroupCode;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -8,11 +10,11 @@ public class TestingStuff {
         byte[] board = generateBoard(xDim, yDim);
 
         Clusters clusters = new Clusters(board, xDim, yDim, 0, 0);
-        ArrayList<ArrayList<Cluster>> foundClusters = clusters.getFeatures();
+//        ArrayList<ArrayList<Cluster>> foundClusters = clusters.getFeatures();
         Cluster biggestCluster = clusters.getBiggestCluster(0);
-        ArrayList<Cluster> singletons = clusters.getXtons(1, 0);
-        ArrayList<Cluster> doubletons = clusters.getXtons(2, 0);
-        ArrayList<Cluster> biggerClusters = clusters.getClustersExSingletons(0);
+//        ArrayList<Cluster> singletons = clusters.getXtons(1, 0);
+//        ArrayList<Cluster> doubletons = clusters.getXtons(2, 0);
+//        ArrayList<Cluster> biggerClusters = clusters.getClustersExSingletons(0);
 
         Move move = new Move(board, xDim, yDim, 0, 0);
 
@@ -21,21 +23,25 @@ public class TestingStuff {
         System.out.println();
         move.print();
         System.out.println();
+        System.out.println("Biggest Cluster JSON: "+biggestCluster.toJSON());
+        System.out.println();
         
-//        Columns columns = new Columns(board, xDim, yDim,0, 0);
-//        columns.printColumns();
+        Columns columns = new Columns(board, xDim, yDim,0, 0);
+//        columns.printColumns(0);
+        ArrayList<Column> columnList = columns.getColumns(0);
+        System.out.println("Column JSON: "+columnList.get(0).toJSON());
 //        System.out.println();
 //        System.out.println("Shortest column:");
-//        columns.getShortest().printColumn();
-//        System.out.println("of size:"+columns.getShortestColumnHeight());
+//        columns.getShortest(0).printColumn();
+//        System.out.println("of size:"+columns.getShortestColumnHeight(0));
 //        System.out.println();
 //        System.out.println("number of colors in column 4");
-//        System.out.println(columns.getColumns().get(3).getColorCount());
-//        System.out.println(columns.getColumns().get(3).getColors());
+//        System.out.println(columns.getColumns(0).get(3).getColorCount());
+//        System.out.println(columns.getColumns(0).get(3).getColors());
 //        System.out.println();
 //        System.out.println("number of colors in column 9");
-//        System.out.println(columns.getColumns().get(8).getColorCount());
-//        System.out.println(columns.getColumns().get(8).getColors());
+//        System.out.println(columns.getColumns(0).get(8).getColorCount());
+//        System.out.println(columns.getColumns(0).get(8).getColors());
 
     }
 

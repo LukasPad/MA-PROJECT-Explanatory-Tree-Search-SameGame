@@ -115,7 +115,7 @@ public class AIOptionsFrame extends JFrame
 				if (aiChoice.getSelectedItem().equals("AStarBot")) threat.setBot(new AStarBot());
 				if (aiChoice.getSelectedItem().equals("IDAStarBot - OverEstimate")) threat.setBot(new IDAStarBotOverEstimate());
 				if (aiChoice.getSelectedItem().equals("IDAStarBot - UnderEstimate")) threat.setBot(new IDAStarBotUnderEstimate());
-				if (aiChoice.getSelectedItem().equals("MaximaxBot")) threat.setBot(new Maximax());
+				//if (aiChoice.getSelectedItem().equals("MaximaxBot")) threat.setBot(new Maximax());
 				if (aiChoice.getSelectedItem().equals("UCTBot")) threat.setBot(new UCTPlayer());
 			
 				settings.setBotType(aiChoice.getSelectedIndex());

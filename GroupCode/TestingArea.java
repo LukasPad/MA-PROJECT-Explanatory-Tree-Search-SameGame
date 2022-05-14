@@ -1,3 +1,5 @@
+package GroupCode;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -11,7 +13,7 @@ public class TestingArea {
         Clusters clusters = new Clusters(board, xDim, yDim,0);
         ArrayList<Cluster> foundClusters = clusters.getFeatures();
         Cluster biggestCluster = clusters.getBiggestCluster();
-        
+
         PlayableArea playablearea = new PlayableArea(board, xDim, yDim, 0);
         Area playarea = playablearea.getPlayArea();
         Area emptyarea = playablearea.getEmptyArea();

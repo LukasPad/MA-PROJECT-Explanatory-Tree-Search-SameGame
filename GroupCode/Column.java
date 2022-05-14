@@ -1,3 +1,7 @@
+package GroupCode;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -58,4 +62,14 @@ public class Column extends Feature {
 	public int getHeight() {return this.height;}
 	public int getColorCount() {return this.colorCount;}
 	public ArrayList<Integer> getColors() {return this.colors;}
+
+	public String toJSON(){
+		JSONObject json = new JSONObject();
+		json.put("shape", this.column);
+		json.put("colors", this.colors);
+		json.put("height", Integer.valueOf(this.height));
+		json.put("numColors", Integer.valueOf(this.colorCount));
+		json.put("time", Integer.valueOf(this.gameStep));
+		return json.toString();
+	}
 }

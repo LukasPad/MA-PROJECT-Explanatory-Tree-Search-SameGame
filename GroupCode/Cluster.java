@@ -1,24 +1,31 @@
+package GroupCode;
+
+import org.json.*;
+
+import java.io.StringWriter;
 import java.util.ArrayList;
 
-public class Area extends Feature{
+public class Cluster extends Feature {
 
     int xDim;
     int yDim;
+    byte color;
     ArrayList<Integer> shape;
     int numCells;
     int height;
     int width;
     double[] middleLocation = new double[2];
-    ArrayList<Integer> areacolors;
-   
-    public Area(ArrayList<Integer> areacolors, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim) {
-        this.areacolors = areacolors;
+    int time;
+
+    public Cluster(byte color, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time) {
+        this.color = color;
         this.shape = shape;
         this.numCells = numCells;
         this.height = height;
         this.width = width;
         this.xDim = xDim;
         this.yDim = yDim;
+        this.time = time;
         findMiddle();
     }
 
@@ -40,7 +47,7 @@ public class Area extends Feature{
     }
 
     public void print(){
-        System.out.println("Type: Cluster, Color: "+areacolors+", Size: "+numCells+", Width: "+width+", Height: "+height+", Middle Point: ("+middleLocation[0]+","+middleLocation[1]+")");
+        System.out.println("Type: Cluster, Color: "+color+", Size: "+numCells+", Width: "+width+", Height: "+height+", Middle Point: ("+middleLocation[0]+","+middleLocation[1]+")");
         for (int j=0;j<yDim;j++){
             for (int i=0;i<xDim;i++){
                 String space = " ";
@@ -51,11 +58,22 @@ public class Area extends Feature{
                     }
                 }
                 System.out.print(space+",");
-
             }
             System.out.println();
         }
         System.out.println();
+    }
+
+    public String toJSON(){
+        JSONObject json = new JSONObject();
+        json.put("color", Integer.valueOf(this.color));
+        json.put("numCells", Integer.valueOf(this.numCells));
+        json.put("shape", this.shape);
+        json.put("middleLocation", this.middleLocation);
+        json.put("height", Integer.valueOf(this.height));
+        json.put("width", Integer.valueOf(this.width));
+        json.put("time", Integer.valueOf(this.time));
+        return json.toString();
     }
 
 }

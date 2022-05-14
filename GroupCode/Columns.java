@@ -1,3 +1,5 @@
+package GroupCode;
+
 import java.util.ArrayList;
 
 /**
@@ -53,7 +55,12 @@ public class Columns extends BoardFeatures {
 	public ArrayList<ArrayList<Column>> getFeatures() {
 		return this.history;
 	}
-	
+
+	@Override
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
+	}
+
 	public void printColumns(int gameStep) {
 		ArrayList<Column> columns = getColumns(gameStep);
 		for (int i = 0; i < columns.size(); i++) {
