@@ -66,7 +66,7 @@ public class Move extends BoardFeatures{
         if ((yChoice<yDim - 1)&&(searchSpace[pos+xDim]==color)) checkMoveDown(searchSpace, xDim, yDim, pos+xDim,xChoice,yChoice+1);
 
         // get #removed columns
-        for (int col = 0; col < xDim; col++) {
+        for (int col = xDim-1; col >= 0; col--) {
             boolean emptyColumn = true;
             for (int row = 0; row < yDim; row++) {
                 if (searchSpace[row*xDim + col] != (byte) -1){
@@ -195,13 +195,14 @@ public class Move extends BoardFeatures{
     	//shift empty columns
     	while(disColumns.isEmpty() == false) {
     		int col = disColumns.remove(0);
-    		for (int i=col; i>0; i--) {
+    		for (int i=col; i < subxDim-1; i++) {
     			for(int j=0; j<subyDim; j++) {
-    				subSpace[j*subxDim + i] = subSpace[j*subxDim + i -1];
+    				subSpace[j*subxDim + i] = subSpace[j*subxDim + i + 1];
     			}
     		}
-			for(int j=0; j<subyDim; j++) {
-				subSpace[j*subxDim] = (byte) -1;
+    		// make final column empty
+			for(int j=1; j<subyDim+1; j++) {
+				subSpace[j*subxDim-1] = (byte) -1;
 			}
     	}
     	//simulate gravity
