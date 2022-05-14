@@ -12,7 +12,7 @@ public class Column extends Feature {
 
 	int gameStep;
 	byte[] column;
-	int height = 0;
+	int height;
 	ArrayList<Integer> colors = new ArrayList<>();
 	int colorCount = 0;
 	
@@ -24,6 +24,7 @@ public class Column extends Feature {
 		
 	public void attributes() {
 		boolean empty = false;
+		this.height = 0;
 		if((int) column[0] == -1) {
 			return;
 		}
@@ -47,7 +48,7 @@ public class Column extends Feature {
 				}
 			}
 		}
-		if(this.height == -1) {this.height = column.length;}
+		if(this.height == 0) {this.height = column.length;}
 		
 	}
 
