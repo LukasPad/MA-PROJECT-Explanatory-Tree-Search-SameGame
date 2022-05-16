@@ -1,5 +1,8 @@
 package GroupCode;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -252,13 +255,21 @@ public class Move extends BoardFeatures{
 
     @Override
     public String toJSON() {
-        // TODO: build json string
-        return null;
-    }
-
-    @Override
-    public void setGameID(int gameID) {
-        this.gameID = gameID;
+        JSONObject json = new JSONObject();
+        try {
+            json.put("location", location);
+            json.put("numRemovedCells", numRemovedCells);
+            json.put("numRemovedColumns", numRemovedColumns);
+            json.put("gameStep", gameStep);
+            json.put("gameID", gameID);
+            json.put("color", color);
+            json.put("columnRange", columnRange);
+            json.put("connectionsCreated", connectionsCreated);
+            json.put("connectionsDestroyed", connectionsDestroyed);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json.toString();
     }
 
     public int getLocation() {

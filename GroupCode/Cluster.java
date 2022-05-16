@@ -73,6 +73,7 @@ public class Cluster extends Feature {
         json.put("height", Integer.valueOf(this.height));
         json.put("width", Integer.valueOf(this.width));
         json.put("time", Integer.valueOf(this.time));
+        // TODO: json.put("gameID", this.gameID);
         return json.toString();
     }
 

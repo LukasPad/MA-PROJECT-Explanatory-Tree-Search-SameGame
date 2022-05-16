@@ -1,3 +1,8 @@
+import GroupCode.BoardFeatures;
+import GroupCode.Clusters;
+import GroupCode.Columns;
+import GroupCode.Moves;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,9 +13,9 @@ public class FeatureCollector {
     int gameID;
 
     static HashMap<String, BoardFeatures> possibleGameFeatures = new HashMap<>() {{
-        // put("Clusters", new Clusters());
+        put("Clusters", new Clusters());
         put("Moves", new Moves());
-        // put("Columns", new Columns());
+        put("Columns", new Columns());
         // TODO: history class new PlayableAreas()
     }};
 
@@ -64,7 +69,7 @@ public class FeatureCollector {
 
     public ArrayList<BoardFeatures> findGameFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int gameID) {
         for (BoardFeatures gameFeature : gameFeatures) {
-            // TODO: implement gameID in features
+            gameFeature.setGameID(gameID);
             gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move);
         }
 
@@ -75,9 +80,9 @@ public class FeatureCollector {
         String json = "";
         for (BoardFeatures gameFeature : gameFeatures) {
             json = gameFeature.toJSON();
-            String className = gameFeature.getClass().getName();
+            String className = gameFeature.getClass().getName().split("\\.")[1];
 
-            try (FileWriter fileWriter = new FileWriter(className + ".csv")) {
+            try (FileWriter fileWriter = new FileWriter("Group-Code/" + className + ".json")) {
                 fileWriter.write(json);
             } catch (IOException e) {
                 throw new RuntimeException(e);

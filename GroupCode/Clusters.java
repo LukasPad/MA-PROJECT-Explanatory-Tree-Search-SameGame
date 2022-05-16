@@ -88,11 +88,6 @@ public class Clusters extends BoardFeatures {
 
     public ArrayList<ArrayList<Cluster>> getFeatures(){ return this.history;}
 
-    @Override
-    public void setGameID(int gameID) {
-        this.gameID = gameID;
-    }
-
     public ArrayList<Cluster> getClusters(int time){
         for (ArrayList<Cluster> cluster : this.history){
             if(cluster.get(0).time == time){

@@ -56,11 +56,6 @@ public class Columns extends BoardFeatures {
 		return this.history;
 	}
 
-	@Override
-	public void setGameID(int gameID) {
-		this.gameID = gameID;
-	}
-
 	public void printColumns(int gameStep) {
 		ArrayList<Column> columns = getColumns(gameStep);
 		for (int i = 0; i < columns.size(); i++) {

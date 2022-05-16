@@ -1,5 +1,8 @@
 package GroupCode;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -23,20 +26,6 @@ public class Moves extends BoardFeatures {
         return history;
     }
 
-    @Override
-    public String toJSON() {
-        StringBuilder json = new StringBuilder();
-        for (Move move : history) {
-            json.append(move.toJSON());
-        }
-        return json.toString();
-    }
-
-    @Override
-    public void setGameID(int gameID) {
-        this.gameID = gameID;
-    }
-
     public Move getMove(int gameStep){
         for (Move move : this.history){
             if(move.gameStep == gameStep){
@@ -44,5 +33,21 @@ public class Moves extends BoardFeatures {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toJSON(){
+        ArrayList<String> move_list = new ArrayList<>();
+        for (Move move : history) {
+            move_list.add(move.toJSON());
+        }
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put("Moves", move_list);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json.toString();
     }
 }

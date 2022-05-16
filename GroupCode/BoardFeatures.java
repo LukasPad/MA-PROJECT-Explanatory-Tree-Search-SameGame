@@ -8,5 +8,11 @@ public abstract class BoardFeatures {
 
     public abstract ArrayList<?> getFeatures();
 
-    public abstract void setGameID(int gameID);
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
+    public String toJSON() {
+        return null;
+    }
 }
