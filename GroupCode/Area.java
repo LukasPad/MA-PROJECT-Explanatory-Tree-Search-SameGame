@@ -1,5 +1,6 @@
 package GroupCode;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -66,14 +67,18 @@ public class Area extends Feature{
 
     public String toJSON(){
         JSONObject json = new JSONObject();
-        json.put("colors", this.areacolors);
-        json.put("numCells", Integer.valueOf(this.numCells));
-        json.put("shape", this.shape);
-        json.put("middleLocation", this.middleLocation);
-        json.put("height", Integer.valueOf(this.height));
-        json.put("width", Integer.valueOf(this.width));
-        json.put("time", Integer.valueOf(this.time));
-        // TODO: json.put("gameID", this.gameID);
+        try {
+            json.put("colors", this.areacolors);
+            json.put("numCells", Integer.valueOf(this.numCells));
+            json.put("shape", this.shape);
+            json.put("middleLocation", this.middleLocation);
+            json.put("height", Integer.valueOf(this.height));
+            json.put("width", Integer.valueOf(this.width));
+            json.put("time", Integer.valueOf(this.time));
+            // TODO: json.put("gameID", this.gameID);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         return json.toString();
     }
 

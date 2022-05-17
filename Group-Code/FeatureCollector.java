@@ -1,7 +1,4 @@
-import GroupCode.BoardFeatures;
-import GroupCode.Clusters;
-import GroupCode.Columns;
-import GroupCode.Moves;
+import GroupCode.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +13,7 @@ public class FeatureCollector {
         put("Clusters", new Clusters());
         put("Moves", new Moves());
         put("Columns", new Columns());
-        // TODO: history class new PlayableAreas()
+        put("PlayableArea", new PlayableArea());
     }};
 
     public static void main(String[] args) {

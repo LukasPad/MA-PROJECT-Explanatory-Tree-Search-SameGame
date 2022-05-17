@@ -1,5 +1,6 @@
 package GroupCode;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -66,11 +67,15 @@ public class Column extends Feature {
 
 	public String toJSON(){
 		JSONObject json = new JSONObject();
-		json.put("shape", this.column);
-		json.put("colors", this.colors);
-		json.put("height", Integer.valueOf(this.height));
-		json.put("numColors", Integer.valueOf(this.colorCount));
-		json.put("time", Integer.valueOf(this.gameStep));
+		try {
+			json.put("shape", this.column);
+			json.put("colors", this.colors);
+			json.put("height", Integer.valueOf(this.height));
+			json.put("numColors", Integer.valueOf(this.colorCount));
+			json.put("time", Integer.valueOf(this.gameStep));
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
 		return json.toString();
 	}
 }

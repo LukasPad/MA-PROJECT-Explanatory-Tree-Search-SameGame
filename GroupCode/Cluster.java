@@ -66,14 +66,18 @@ public class Cluster extends Feature {
 
     public String toJSON(){
         JSONObject json = new JSONObject();
-        json.put("color", Integer.valueOf(this.color));
-        json.put("numCells", Integer.valueOf(this.numCells));
-        json.put("shape", this.shape);
-        json.put("middleLocation", this.middleLocation);
-        json.put("height", Integer.valueOf(this.height));
-        json.put("width", Integer.valueOf(this.width));
-        json.put("time", Integer.valueOf(this.time));
-        // TODO: json.put("gameID", this.gameID);
+        try {
+            json.put("color", Integer.valueOf(this.color));
+            json.put("numCells", Integer.valueOf(this.numCells));
+            json.put("shape", this.shape);
+            json.put("middleLocation", this.middleLocation);
+            json.put("height", Integer.valueOf(this.height));
+            json.put("width", Integer.valueOf(this.width));
+            json.put("time", Integer.valueOf(this.time));
+            // TODO: json.put("gameID", this.gameID);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         return json.toString();
     }
 

@@ -140,13 +140,13 @@ public class Clusters extends BoardFeatures {
     }
 
     public String toJSON(){
-        String fullJSON = "";
+        StringBuilder fullJSON = new StringBuilder();
         for(ArrayList<Cluster> clusters:this.history){
             for(Cluster cluster:clusters){
-                fullJSON += cluster.toJSON();
+                fullJSON.append(cluster.toJSON());
             }
         }
-        return fullJSON;
+        return fullJSON.toString();
     }
 
 }

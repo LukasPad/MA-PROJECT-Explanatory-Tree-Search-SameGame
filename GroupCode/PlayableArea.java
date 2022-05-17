@@ -1,15 +1,17 @@
 package GroupCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class PlayableArea extends BoardFeatures {
 
-    ArrayList<ArrayList<Area>> historyplay = new ArrayList();
-    ArrayList<ArrayList<Area>> historyempt = new ArrayList();
-    int gameID = 0;
+    ArrayList<Area> historyplay = new ArrayList<>();
+    ArrayList<Area> historyempt = new ArrayList<>();
 
-    ArrayList<Area> playablearea = new ArrayList<>();
-    ArrayList<Area> emptyarea = new ArrayList<>();
+    public PlayableArea() {
+        historyempt = new ArrayList<>();
+        historyplay = new ArrayList<>();
+    }
 
     public PlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum){
         findFeatures(searchSpace, xDim, yDim, gameStep, moveNum);
@@ -18,6 +20,11 @@ public class PlayableArea extends BoardFeatures {
 
     @Override
     public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum) {
+        findEmpty(searchSpace, xDim, yDim, gameStep, moveNum);
+        return findPlayableArea(searchSpace, xDim, yDim, gameStep, moveNum);
+    }
+
+    public ArrayList findPlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum) {
 //        byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         int empty = -1;
         ArrayList<Integer> color = new ArrayList<>();
@@ -55,10 +62,10 @@ public class PlayableArea extends BoardFeatures {
         }
         int width = mostWidth - leastWidth + 1;
         int height = mostHeight - leastHeight + 1;
-        playablearea.add(new Area(color, playableboard, playableboard.size(), height, width, xDim, yDim, gameStep));
+        Area playablearea = new Area(color, playableboard, playableboard.size(), height, width, xDim, yDim, gameStep);
 
         historyplay.add(playablearea);
-        return playablearea;
+        return new ArrayList<>(Collections.singleton(playablearea));
     }
 
     public ArrayList findEmpty(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum) {
@@ -96,59 +103,52 @@ public class PlayableArea extends BoardFeatures {
         }
         int width = mostWidth - leastWidth + 1;
         int height = mostHeight - leastHeight + 1;
-        emptyarea.add(new Area(numberempty, emptyboard, emptyboard.size(), height, width, xDim, yDim, gameStep));
+        Area emptyarea = new Area(numberempty, emptyboard, emptyboard.size(), height, width, xDim, yDim, gameStep);
         historyempt.add(emptyarea);
-        return emptyarea;
+        return new ArrayList<>(Collections.singleton(emptyarea));
     }
 
-    public ArrayList<ArrayList<Area>> getFeatures(){ return this.historyplay;}
-    public ArrayList<ArrayList<Area>> getEmpty(){ return this.historyempt;}
+    public ArrayList<Area> getFeatures(){ return this.historyplay;}
+    public ArrayList<Area> getEmpty(){ return this.historyempt;}
 
     @Override
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
-    public ArrayList<Area> getCurPlay(int time){
-        for (ArrayList<Area> area : this.historyplay){
-            if(area.get(0).time == time){
+    public Area getCurPlay(int time){
+        for (Area area : this.historyplay){
+            if(area.time == time){
                 return area;
             }
         }
         return null;
     }
 
-    public ArrayList<Area> getCurEmpty(int time){
-        for (ArrayList<Area> area : this.historyempt){
-            if(area.get(0).time == time){
+    public Area getCurEmpty(int time){
+        for (Area area : this.historyempt){
+            if(area.time == time){
                 return area;
             }
         }
         return null;
     }
     public Area getPlayArea(int time){
-        Area playarea = this.getCurPlay(time).get(0);
-
-        return playarea;
+        return this.getCurPlay(time);
     }
 
     public Area getEmptyArea(int time){
-        Area emarea = this.getCurEmpty(time).get(0);
-        return emarea;
+        return this.getCurEmpty(time);
     }
 
     public String toJSON(){
-        String fullJSON = "";
-        for(ArrayList<Area> plarea:this.historyplay) {
-            for (Area playarea : plarea) {
-                fullJSON += playarea.toJSON();
-            }
+        StringBuilder fullJSON = new StringBuilder();
+        for (Area playarea : historyplay) {
+            fullJSON.append(playarea.toJSON());
         }
-        for(ArrayList<Area> emarea:this.historyempt){
-            for(Area emptyarea:emarea){
-                fullJSON += emptyarea.toJSON();
-            }
+        for(Area emptyarea:historyempt){
+            fullJSON.append(emptyarea.toJSON());
         }
-        return fullJSON;
+        return fullJSON.toString();
     }
 
 
