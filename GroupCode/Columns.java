@@ -104,4 +104,14 @@ public class Columns extends BoardFeatures {
 		return counter;
 	}
 
+	public String toJSON(){
+		String fullJSON = "";
+		for(ArrayList<Column> columns:this.history){
+			for(Column column:columns){
+				fullJSON += column.toJSON();
+			}
+		}
+		return fullJSON;
+	}
+
 }
