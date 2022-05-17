@@ -1,6 +1,5 @@
 package GroupCode;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class TestingArea {
@@ -10,15 +9,15 @@ public class TestingArea {
         int yDim = 15;
         byte[] board = generateBoard(xDim, yDim, colors);
 
-        Clusters clusters = new Clusters(board, xDim, yDim,0);
-        ArrayList<Cluster> foundClusters = clusters.getFeatures();
-        Cluster biggestCluster = clusters.getBiggestCluster();
+//        Clusters clusters = new Clusters(board, xDim, yDim,0);
+//        ArrayList<Cluster> foundClusters = clusters.getFeatures();
+//        Cluster biggestCluster = clusters.getBiggestCluster();
 
-        PlayableArea playablearea = new PlayableArea(board, xDim, yDim, 0);
-        Area playarea = playablearea.getPlayArea();
-        Area emptyarea = playablearea.getEmptyArea();
+        PlayableArea playablearea = new PlayableArea(board, xDim, yDim, 0, 0);
+        Area playarea = playablearea.getPlayArea(0);
+        Area emptyarea = playablearea.getEmptyArea(0);
 
-        Move move = new Move(board, xDim, yDim, 0);
+        Move move = new Move(board, xDim, yDim, 0, 0);
 
         printBoard(board, xDim, yDim);
         playarea.print();

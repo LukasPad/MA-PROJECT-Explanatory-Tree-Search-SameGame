@@ -1,9 +1,12 @@
 package GroupCode;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class Area extends Feature{
 
+    int time;
     int xDim;
     int yDim;
     ArrayList<Integer> shape;
@@ -13,7 +16,7 @@ public class Area extends Feature{
     double[] middleLocation = new double[2];
     ArrayList<Integer> areacolors;
    
-    public Area(ArrayList<Integer> areacolors, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim) {
+    public Area(ArrayList<Integer> areacolors, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time) {
         this.areacolors = areacolors;
         this.shape = shape;
         this.numCells = numCells;
@@ -21,6 +24,7 @@ public class Area extends Feature{
         this.width = width;
         this.xDim = xDim;
         this.yDim = yDim;
+        this.time = time;
         findMiddle();
     }
 
@@ -58,6 +62,19 @@ public class Area extends Feature{
             System.out.println();
         }
         System.out.println();
+    }
+
+    public String toJSON(){
+        JSONObject json = new JSONObject();
+        json.put("color", this.areacolors);
+        json.put("numCells", Integer.valueOf(this.numCells));
+        json.put("shape", this.shape);
+        json.put("middleLocation", this.middleLocation);
+        json.put("height", Integer.valueOf(this.height));
+        json.put("width", Integer.valueOf(this.width));
+        json.put("time", Integer.valueOf(this.time));
+        // TODO: json.put("gameID", this.gameID);
+        return json.toString();
     }
 
 }
