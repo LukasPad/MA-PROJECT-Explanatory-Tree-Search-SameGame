@@ -18,12 +18,24 @@ public class TestingStuff {
 
         Move move = new Move(board, xDim, yDim, 0, 0);
 
+        PlayableArea playablearea = new PlayableArea(board, xDim, yDim, 0, 0);
+        Area playarea = playablearea.getPlayArea(0);
+        Area emptyarea = playablearea.getEmptyArea(0);
+
         printBoard(board, xDim, yDim);
         biggestCluster.print();
         System.out.println();
         move.print();
         System.out.println();
         System.out.println("Biggest Cluster JSON: "+biggestCluster.toJSON());
+        System.out.println();
+        playarea.print();
+        System.out.println();
+        emptyarea.print();
+        System.out.println();
+        System.out.println("Playable Area JSON: "+playarea.toJSON());
+        System.out.println();
+        System.out.println("Empty Area JSON: "+emptyarea.toJSON());
         System.out.println();
         
         Columns columns = new Columns(board, xDim, yDim,0, 0);

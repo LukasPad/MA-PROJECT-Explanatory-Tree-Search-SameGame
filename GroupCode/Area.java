@@ -66,7 +66,7 @@ public class Area extends Feature{
 
     public String toJSON(){
         JSONObject json = new JSONObject();
-        json.put("color", this.areacolors);
+        json.put("colors", this.areacolors);
         json.put("numCells", Integer.valueOf(this.numCells));
         json.put("shape", this.shape);
         json.put("middleLocation", this.middleLocation);
