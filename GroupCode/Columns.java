@@ -32,7 +32,7 @@ public class Columns extends BoardFeatures {
 			for (int j = 0; j < yDim; j++) {
 				columnSpace[yDim - 1 - j] = searchSpace[j*xDim + i];
 			}
-			columns.add(new Column(columnSpace, gameStep));
+			columns.add(new Column(columnSpace, gameStep, this.gameID));
 		}
 		int shortestColumnHeight = 0;
 		Column shortest = columns.get(0);

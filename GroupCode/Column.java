@@ -16,10 +16,12 @@ public class Column extends Feature {
 	int height;
 	ArrayList<Integer> colors = new ArrayList<>();
 	int colorCount = 0;
+	int gameID;
 	
-	public Column(byte[] columnSpace, int gameStep) {
+	public Column(byte[] columnSpace, int gameStep, int gameID) {
 		this.gameStep = gameStep;
 		this.column = columnSpace;
+		this.gameID = gameID;
 		attributes();
 	}
 		
@@ -73,6 +75,7 @@ public class Column extends Feature {
 			json.put("height", Integer.valueOf(this.height));
 			json.put("numColors", Integer.valueOf(this.colorCount));
 			json.put("time", Integer.valueOf(this.gameStep));
+			json.put("gameID", this.gameID);
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}

@@ -47,7 +47,7 @@ public class Area extends Feature{
     }
 
     public void print(){
-        System.out.println("Type: Cluster, Color: "+areacolors+", Size: "+numCells+", Width: "+width+", Height: "+height+", Middle Point: ("+middleLocation[0]+","+middleLocation[1]+")");
+        System.out.println("Type: Area, Color: "+areacolors+", Size: "+numCells+", Width: "+width+", Height: "+height+", Middle Point: ("+middleLocation[0]+","+middleLocation[1]+")");
         for (int j=0;j<yDim;j++){
             for (int i=0;i<xDim;i++){
                 String space = " ";
