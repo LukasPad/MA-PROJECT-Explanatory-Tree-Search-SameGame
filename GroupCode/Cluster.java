@@ -16,8 +16,9 @@ public class Cluster extends Feature {
     int width;
     double[] middleLocation = new double[2];
     int time;
+    int gameID;
 
-    public Cluster(byte color, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time) {
+    public Cluster(byte color, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time, int gameID) {
         this.color = color;
         this.shape = shape;
         this.numCells = numCells;
@@ -26,6 +27,7 @@ public class Cluster extends Feature {
         this.xDim = xDim;
         this.yDim = yDim;
         this.time = time;
+        this.gameID = gameID;
         findMiddle();
     }
 
@@ -74,7 +76,7 @@ public class Cluster extends Feature {
             json.put("height", Integer.valueOf(this.height));
             json.put("width", Integer.valueOf(this.width));
             json.put("time", Integer.valueOf(this.time));
-            // TODO: json.put("gameID", this.gameID);
+            json.put("gameID", this.gameID);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
