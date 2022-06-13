@@ -1,0 +1,9 @@
+#!/bin/sh
+# Here we say that environment variables will be copied
+#$ -V
+# Here we set the output and error files
+#$ -cwd
+#$ -o test.out
+#$ -e test.err
+pwd
+java TestPlayout
