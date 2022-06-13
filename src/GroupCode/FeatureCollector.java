@@ -84,7 +84,7 @@ public class FeatureCollector {
             json = gameFeature.toJSON();
             String className = gameFeature.getClass().getName().split("\\.")[1];
 
-            try (FileWriter fileWriter = new FileWriter("Group-Code/" + className + ".json")) {
+            try (FileWriter fileWriter = new FileWriter("data/" + className + ".json")) {
                 fileWriter.write(json);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -98,7 +98,7 @@ public class FeatureCollector {
             throw new RuntimeException(e);
         }
 
-        try (FileWriter fileWriter = new FileWriter("Group-Code/gameScores.json")) {
+        try (FileWriter fileWriter = new FileWriter("data/gameScores.json")) {
             fileWriter.write(jsonScores.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);

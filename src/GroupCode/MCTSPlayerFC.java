@@ -38,4 +38,17 @@ public class MCTSPlayerFC extends MCTSPlayer {
             }
         }
     }
+
+    public void saveTree(UCTNode n, int depth)
+    {
+        if (n==null) return;
+        for (UCTEdge loop=n.child;loop!=null;loop=loop.sibling)
+        {
+            for (int i=0;i<depth;i++)
+            {
+
+            }
+            saveTree(loop.child,depth+1);
+        }
+    }
 }
