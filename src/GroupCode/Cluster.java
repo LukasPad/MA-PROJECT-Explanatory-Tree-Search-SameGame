@@ -66,7 +66,7 @@ public class Cluster extends Feature {
         System.out.println();
     }
 
-    public String toJSON(){
+    public JSONObject toJSON(){
         JSONObject json = new JSONObject();
         try {
             json.put("color", Integer.valueOf(this.color));
@@ -75,12 +75,10 @@ public class Cluster extends Feature {
             json.put("middleLocation", this.middleLocation);
             json.put("height", Integer.valueOf(this.height));
             json.put("width", Integer.valueOf(this.width));
-            json.put("time", Integer.valueOf(this.time));
-            json.put("gameID", this.gameID);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        return json.toString();
+        return json;
     }
 
 }

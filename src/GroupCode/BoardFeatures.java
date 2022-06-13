@@ -1,4 +1,6 @@
 package GroupCode;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public abstract class BoardFeatures {

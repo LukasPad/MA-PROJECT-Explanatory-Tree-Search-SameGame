@@ -1,5 +1,6 @@
 package GroupCode;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +17,6 @@ public class Moves extends BoardFeatures {
     @Override
     public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
         Move cur_move = new Move(searchSpace, xDim, yDim, gameStep, move, mctsScore);
-        cur_move.setGameID(gameID);
         history.add(cur_move);
         return new ArrayList<>(Collections.singleton(cur_move));
     }
@@ -35,19 +35,12 @@ public class Moves extends BoardFeatures {
         return null;
     }
 
-    @Override
     public String toJSON(){
-        ArrayList<String> move_list = new ArrayList<>();
+        JSONArray json = new JSONArray();
         for (Move move : history) {
-            move_list.add(move.toJSON());
+            json.put(move.toJSON());
         }
 
-        JSONObject json = new JSONObject();
-        try {
-            json.put("Moves", move_list);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
         return json.toString();
     }
 }

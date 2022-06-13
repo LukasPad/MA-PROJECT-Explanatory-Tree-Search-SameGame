@@ -16,7 +16,7 @@ public class MCTSPlayerFC extends MCTSPlayer {
             int move = getMove(position, xDim, yDim, scoreMode, time / 35);
 
             // Feature collection before the move is played
-            featureCollector.findGameFeatures(position, xDim, yDim, moveCounter, move, featureCollector.getGameID(), topScore);
+            featureCollector.findGameFeatures(position, xDim, yDim, moveCounter, move, topScore);
 
             int colorPlayed = position[move];
             int bloks = SameGameBoard.makeMove(position, move, move % 15, move / 15, colorPlayed);
@@ -24,8 +24,6 @@ public class MCTSPlayerFC extends MCTSPlayer {
             gamePosColors[colorPlayed] -= bloks;
 
             gameScore += (bloks - 2) * (bloks - 2);
-
-            featureCollector.saveCurrentGameScore(gameScore, position, featureCollector.getGameID(), moveCounter);
 
             moveCounter++;
         }

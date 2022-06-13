@@ -1,25 +1,19 @@
 package GroupCode;
 
 import OldCode.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FeatureCollector {
-    ArrayList<BoardFeatures> gameFeatures = new ArrayList<>();
-    ArrayList<String> gameScores = new ArrayList<>();
-    int gameID;
-
-    static HashMap<String, BoardFeatures> possibleGameFeatures = new HashMap<>() {{
-        put("Clusters", new Clusters());
-        put("Moves", new Moves());
-        put("Columns", new Columns());
-        put("PlayableArea", new PlayableArea());
-    }};
+    int gameID, maxGameStep;
+    JSONObject gameJSON;
+    JSONObject fullJSON = new JSONObject();
+    HashMap<String, BoardFeatures> gameFeatures;
 
     public static void main(String[] args) {
         FeatureCollector featureCollector = new FeatureCollector();
@@ -43,10 +37,11 @@ public class FeatureCollector {
         featureCollector.setGameID(0);
         for (byte[] position : positions) {
             bot.playGame(position, 15, 15, BoardPanel.SAMEGAME, millisecondsPerMove, featureCollector);
+            featureCollector.addJSON();
+            featureCollector.resetForNewGame();
             Runtime.getRuntime().gc();
-
-            featureCollector.setGameID(featureCollector.getGameID() + 1);
         }
+
         featureCollector.exportJSON();
         long endTime = System.currentTimeMillis();
 
@@ -56,72 +51,80 @@ public class FeatureCollector {
     }
 
     public FeatureCollector() {
-        this(possibleGameFeatures.keySet().toArray(new String[0]));
+        this.resetForNewGame();
     }
 
-    public FeatureCollector(String[] featureNames) {
-        for (String featureName : featureNames) {
-            if (possibleGameFeatures.containsKey(featureName)) {
-                gameFeatures.add(possibleGameFeatures.get(featureName));
-            } else {
-                System.out.println("I: There is not feature class: " + featureName);
-            }
-        }
+    public void resetForNewGame() {
+        // Empty all feature collectors
+        gameJSON = new JSONObject();
+        gameFeatures = new HashMap<>() {{
+            put("Clusters", new Clusters());
+            put("Moves", new Moves());
+            put("Columns", new Columns());
+            put("PlayableArea", new PlayableArea());
+            put("GameStates", new GameStates());
+        }};
+
+        maxGameStep = 0;
+        gameID++;
     }
 
-    public ArrayList<BoardFeatures> findGameFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int gameID, int mctsScore) {
-        for (BoardFeatures gameFeature : gameFeatures) {
-            gameFeature.setGameID(gameID);
+    public void findGameFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+        for (BoardFeatures gameFeature : gameFeatures.values()) {
             gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
         }
 
-        return gameFeatures;
+        if (maxGameStep < gameStep) maxGameStep = gameStep;
+    }
+
+    public void addJSON() {
+        Clusters clusters = (Clusters) gameFeatures.get("Clusters");
+        Moves moves = (Moves) gameFeatures.get("Moves");
+        Columns columns = (Columns) gameFeatures.get("Columns");
+        PlayableArea playableArea = (PlayableArea) gameFeatures.get("PlayableArea");
+        GameStates gameStates = (GameStates) gameFeatures.get("GameStates");
+        try {
+            for (int i = 0; i < maxGameStep; i++) {
+                JSONObject jsonGameStep = new JSONObject();
+
+                //game state json
+                jsonGameStep.put("GameState", gameStates.getState(i).toJSON());
+
+                //cluster json
+                JSONArray jsonCluster = new JSONArray();
+                for (Cluster cluster : clusters.getClusters(i)) {
+                    jsonCluster.put(cluster.toJSON());
+                }
+                jsonGameStep.put("Clusters", jsonCluster);
+
+                //move json
+                jsonGameStep.put("Move", moves.getMove(i).toJSON());
+
+                //columns json
+                JSONArray jsonColumns = new JSONArray();
+                for (Column column : columns.getColumns(i)) {
+                    jsonColumns.put(column.toJSON());
+                }
+                jsonGameStep.put("Columns", jsonColumns);
+
+                //play area json
+                jsonGameStep.put("PlayArea", playableArea.getPlayArea(i).toJSON());
+                jsonGameStep.put("EmptyArea", playableArea.getEmptyArea(i).toJSON());
+
+                gameJSON.put(Integer.toString(i), jsonGameStep);
+            }
+            fullJSON.put(Integer.toString(gameID), gameJSON);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void exportJSON() {
-        String json = "";
-        for (BoardFeatures gameFeature : gameFeatures) {
-            json = gameFeature.toJSON();
-            String className = gameFeature.getClass().getName().split("\\.")[1];
-
-            try (FileWriter fileWriter = new FileWriter("data/" + className + ".json")) {
-                fileWriter.write(json);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        JSONObject jsonScores = new JSONObject();
-        try {
-            jsonScores.put("Scores", gameScores);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (FileWriter fileWriter = new FileWriter("data/gameScores.json")) {
-            fileWriter.write(jsonScores.toString());
+        try (FileWriter fileWriter = new FileWriter("data/games.json")) {
+            fileWriter.write(fullJSON.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void saveCurrentGameScore(int gameScore, byte[] position, int gameID, int gameStep) {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("gameScore", gameScore);
-            json.put("position", position);
-            json.put("gameID", gameID);
-            json.put("gameStep", gameStep);
-            json.put("gameID", gameID);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-        gameScores.add(json.toString());
-    }
-
-    public int getGameID() {
-        return gameID;
     }
 
     public void setGameID(int gameID) {

@@ -65,7 +65,7 @@ public class Area extends Feature{
         System.out.println();
     }
 
-    public String toJSON(){
+    public JSONObject toJSON(){
         JSONObject json = new JSONObject();
         try {
             json.put("colors", this.areacolors);
@@ -74,12 +74,10 @@ public class Area extends Feature{
             json.put("middleLocation", this.middleLocation);
             json.put("height", Integer.valueOf(this.height));
             json.put("width", Integer.valueOf(this.width));
-            json.put("time", Integer.valueOf(this.time));
-            // TODO: json.put("gameID", this.gameID);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        return json.toString();
+        return json;
     }
 
 }

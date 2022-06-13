@@ -67,18 +67,16 @@ public class Column extends Feature {
 	public int getColorCount() {return this.colorCount;}
 	public ArrayList<Integer> getColors() {return this.colors;}
 
-	public String toJSON(){
+	public JSONObject toJSON(){
 		JSONObject json = new JSONObject();
 		try {
 			json.put("shape", this.column);
 			json.put("colors", this.colors);
 			json.put("height", Integer.valueOf(this.height));
 			json.put("numColors", Integer.valueOf(this.colorCount));
-			json.put("time", Integer.valueOf(this.gameStep));
-			json.put("gameID", this.gameID);
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
-		return json.toString();
+		return json;
 	}
 }

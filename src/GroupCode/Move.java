@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class Move extends BoardFeatures{
+public class Move extends Feature{
     private int location, numRemovedCells, numRemovedColumns, mctsScore;
     int gameStep;
     private byte color;
@@ -19,7 +19,6 @@ public class Move extends BoardFeatures{
         findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
     }
 
-    @Override
     public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
         this.mctsScore = mctsScore;
         location = move;
@@ -249,20 +248,17 @@ public class Move extends BoardFeatures{
         System.out.println("Type: Move, Location: " + location + ", Color: " + color + ", removed cells: " + numRemovedCells + ", removed columns: " + numRemovedColumns);
     }
 
-    @Override
     public ArrayList<Move> getFeatures() {
         return new ArrayList<>(Collections.singleton(this));
     }
 
     @Override
-    public String toJSON() {
+    public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         try {
             json.put("location", location);
             json.put("numRemovedCells", numRemovedCells);
             json.put("numRemovedColumns", numRemovedColumns);
-            json.put("gameStep", gameStep);
-            json.put("gameID", gameID);
             json.put("color", color);
             json.put("columnRange", columnRange);
             json.put("connectionsCreated", connectionsCreated);
@@ -271,7 +267,7 @@ public class Move extends BoardFeatures{
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        return json.toString();
+        return json;
     }
 
     public int getLocation() {

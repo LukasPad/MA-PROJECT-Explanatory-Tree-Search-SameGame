@@ -1,7 +1,9 @@
 package GroupCode;
 
+import org.json.JSONObject;
+
 public abstract class Feature {
 
-    public abstract String toJSON();
+    public abstract JSONObject toJSON();
 
 }
