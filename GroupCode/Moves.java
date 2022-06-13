@@ -14,8 +14,8 @@ public class Moves extends BoardFeatures {
     }
 
     @Override
-    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
-        Move cur_move = new Move(searchSpace, xDim, yDim, gameStep, move);
+    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+        Move cur_move = new Move(searchSpace, xDim, yDim, gameStep, move, mctsScore);
         cur_move.setGameID(gameID);
         history.add(cur_move);
         return new ArrayList<>(Collections.singleton(cur_move));

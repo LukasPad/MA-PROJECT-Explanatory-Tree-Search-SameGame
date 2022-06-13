@@ -8,19 +8,20 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class Move extends BoardFeatures{
-    private int location, numRemovedCells, numRemovedColumns;
+    private int location, numRemovedCells, numRemovedColumns, mctsScore;
     int gameStep;
     private byte color;
     int[] columnRange = new int[3];
     int connectionsCreated;
     int connectionsDestroyed;
 
-    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move){
-        findFeatures(searchSpace, xDim, yDim, gameStep, move);
+    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore){
+        findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
     }
 
     @Override
-    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
+    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+        this.mctsScore = mctsScore;
         location = move;
         color = searchSpace[move];
         this.gameStep = gameStep;
@@ -266,6 +267,7 @@ public class Move extends BoardFeatures{
             json.put("columnRange", columnRange);
             json.put("connectionsCreated", connectionsCreated);
             json.put("connectionsDestroyed", connectionsDestroyed);
+            json.put("mctsScore", mctsScore);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

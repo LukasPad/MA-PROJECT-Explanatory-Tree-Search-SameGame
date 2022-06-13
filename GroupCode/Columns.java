@@ -14,8 +14,8 @@ public class Columns extends BoardFeatures {
 
 	public Columns() {}
 
-	public Columns(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
-		findFeatures(searchSpace, xDim, yDim, gameStep, move);
+	public Columns(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+		findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
 	}
 	
 	/**
@@ -24,7 +24,7 @@ public class Columns extends BoardFeatures {
 	 * @return all columns ordered left to right on the board
 	 */
 	@Override
-	public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
+	public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
 	    ArrayList<Column> columns = new ArrayList<>();
 	    
 		for (int i = 0; i < xDim; i++) {

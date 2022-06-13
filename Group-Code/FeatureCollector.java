@@ -1,4 +1,6 @@
 import GroupCode.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.util.HashMap;
 
 public class FeatureCollector {
     ArrayList<BoardFeatures> gameFeatures = new ArrayList<>();
+    ArrayList<String> gameScores = new ArrayList<>();
     int gameID;
 
     static HashMap<String, BoardFeatures> possibleGameFeatures = new HashMap<>() {{
@@ -64,10 +67,10 @@ public class FeatureCollector {
         }
     }
 
-    public ArrayList<BoardFeatures> findGameFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int gameID) {
+    public ArrayList<BoardFeatures> findGameFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int gameID, int mctsScore) {
         for (BoardFeatures gameFeature : gameFeatures) {
             gameFeature.setGameID(gameID);
-            gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move);
+            gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
         }
 
         return gameFeatures;
@@ -85,6 +88,34 @@ public class FeatureCollector {
                 throw new RuntimeException(e);
             }
         }
+
+        JSONObject jsonScores = new JSONObject();
+        try {
+            jsonScores.put("Scores", gameScores);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (FileWriter fileWriter = new FileWriter("Group-Code/gameScores.json")) {
+            fileWriter.write(jsonScores.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveCurrentGameScore(int gameScore, byte[] position, int gameID, int gameStep) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("gameScore", gameScore);
+            json.put("position", position);
+            json.put("gameID", gameID);
+            json.put("gameStep", gameStep);
+            json.put("gameID", gameID);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        gameScores.add(json.toString());
     }
 
     public int getGameID() {

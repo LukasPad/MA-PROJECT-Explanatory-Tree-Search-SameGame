@@ -10,12 +10,12 @@ public class Clusters extends BoardFeatures {
 
     public Clusters(){}
 
-    public Clusters(byte[] searchSpace, int xDim, int yDim, int time, int move){
-        findFeatures(searchSpace, xDim, yDim, time, move);
+    public Clusters(byte[] searchSpace, int xDim, int yDim, int time, int move, int mctsScore){
+        findFeatures(searchSpace, xDim, yDim, time, move, mctsScore);
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
         ArrayList<Cluster> clusters = new ArrayList<>();
         byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         for (int i = 0; i < searchSpace.length; i++) {

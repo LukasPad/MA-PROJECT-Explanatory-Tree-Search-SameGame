@@ -13,13 +13,13 @@ public class PlayableArea extends BoardFeatures {
         historyplay = new ArrayList<>();
     }
 
-    public PlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum){
-        findFeatures(searchSpace, xDim, yDim, gameStep, moveNum);
+    public PlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore){
+        findFeatures(searchSpace, xDim, yDim, gameStep, moveNum, mctsScore);
         findEmpty(searchSpace, xDim, yDim, gameStep, moveNum);
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore) {
         findEmpty(searchSpace, xDim, yDim, gameStep, moveNum);
         return findPlayableArea(searchSpace, xDim, yDim, gameStep, moveNum);
     }
