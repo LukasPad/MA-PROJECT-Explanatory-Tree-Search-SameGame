@@ -10,6 +10,9 @@ public class TestingStuff {
         byte[] board = generateBoard(xDim, yDim);
 
         Clusters clusters = new Clusters(board, xDim, yDim, 0, 0);
+        clusters.setGameID(1274852);
+        System.out.println(clusters.toJSON());
+
 //        ArrayList<ArrayList<Cluster>> foundClusters = clusters.getFeatures();
         Cluster biggestCluster = clusters.getBiggestCluster(0);
 //        ArrayList<Cluster> singletons = clusters.getXtons(1, 0);
