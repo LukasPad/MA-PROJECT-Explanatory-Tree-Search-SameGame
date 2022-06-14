@@ -9,6 +9,8 @@ public class MCTSPlayerFC extends MCTSPlayer {
     int counter = 0;
 
     public void playGame(byte[] position, int xDim, int yDim, int scoreMode, int time, FeatureCollector featureCollector) {
+        fc_tree = featureCollector;
+        counter = 0;
         int[] gamePosColors = new int[10];
         for (int i = 0; i < 225; i++) if (position[i] >= 0) gamePosColors[position[i]]++;
 
@@ -23,9 +25,6 @@ public class MCTSPlayerFC extends MCTSPlayer {
             System.arraycopy(position, 0, tempBoard, 0, xDim*yDim);
             int move = getMove(position, xDim, yDim, scoreMode, time / 35);
 
-            // Feature collection before the move is played
-            featureCollector.findGameFeatures(position, xDim, yDim, moveCounter, move, topScore);
-
             int colorPlayed = position[move];
             int bloks = SameGameBoard.makeMove(position, move, move % 15, move / 15, colorPlayed);
             SameGameBoard.dropDownStones(position, 15, 15);
@@ -33,7 +32,6 @@ public class MCTSPlayerFC extends MCTSPlayer {
 
             gameScore += (bloks - 2) * (bloks - 2);
 
-            featureCollector.saveCurrentGameScore(gameScore, position, featureCollector.getGameID(), moveCounter);
             saveTree(root, tempBoard);
 
             moveCounter++;
@@ -54,40 +52,45 @@ public class MCTSPlayerFC extends MCTSPlayer {
 
     public void saveTree(UCTNode n, byte[] pos){
         counter++;
-        saveTree(n, 0 , pos, -1 , -1);
-        fc_tree.exportTreeJSON(counter);
-        fc_tree.clearHistory();
+        int maxDepth = saveTree(n, 0 , pos, null, -1 , -1);
+        fc_tree.exportJSON(maxDepth, counter);
+        fc_tree.resetForNewGame();
     }
 
-    public void saveTree(UCTNode n, int depth, byte[] pos, int parentID, int move)
+    public int saveTree(UCTNode n, int depth, byte[] pos, byte[] prevPos, int parentID, int move)
     {
-        if (n==null && n.simulations < 10) return;
+        if (n==null && n.simulations < 10) return 0;
 
         nodeID++;
         int nID = nodeID;
 
         if (parentID != -1)
         {
-            fc_tree.findGameFeatures(pos, xDim, yDim, depth/*, move*/, 0, n.topScore, nID);
+            fc_tree.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.topScore, nID);
         }
         else
         {
-            fc_tree.findGameFeatures(pos, xDim, yDim, depth, 0, n.topScore, nID);
+            fc_tree.findGameFeatures(pos, prevPos, xDim, yDim, depth, -1, n.topScore, nID);
         }
         fc_tree.addEdge(nID, parentID);
+
+        int max_depth = depth;
 
         for (UCTEdge loop=n.child;loop!=null;loop=loop.sibling)
         {
             int colorPlayed = pos[loop.move];
             byte[] position = new byte[255];
             System.arraycopy(pos, 0, position, 0, xDim*yDim);
-            int bloks = SameGameBoard.makeMove(position, loop.move, loop.move % 15, loop.move / 15, position[loop.move]);
+            int bloks = SameGameBoard.makeMove(position, loop.move, loop.move % 15, loop.move / 15, colorPlayed);
             SameGameBoard.dropDownStones(position, 15, 15);
             //gamePosColors[colorPlayed] -= bloks;
 
-            saveTree(loop.child, depth+1, position, nID, loop.move);
+            int child_depth = saveTree(loop.child, depth+1, position, pos, nID, loop.move);
+            if (child_depth > max_depth){
+                max_depth = child_depth;
+            }
         }
-        return;
+        return max_depth;
     }
 
 //    public void saveTree(UCTNode n, int depth, int parentID)

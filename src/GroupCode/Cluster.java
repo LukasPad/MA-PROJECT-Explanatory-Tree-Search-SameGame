@@ -77,6 +77,7 @@ public class Cluster extends Feature {
             json.put("middleLocation", this.middleLocation);
             json.put("height", Integer.valueOf(this.height));
             json.put("width", Integer.valueOf(this.width));
+            json.put("nodeID", nodeID);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

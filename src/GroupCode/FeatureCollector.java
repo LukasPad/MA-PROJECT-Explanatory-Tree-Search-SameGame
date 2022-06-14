@@ -15,7 +15,6 @@ import java.util.HashMap;
 public class FeatureCollector {
     int gameID, maxGameStep;
     JSONObject gameJSON;
-    JSONObject fullJSON = new JSONObject();
     HashMap<String, BoardFeatures> gameFeatures;
     ArrayList<int[]> nodeEdges = new ArrayList<>();
 
@@ -38,18 +37,15 @@ public class FeatureCollector {
         System.out.println("Number of nodes: " + UCTNode.totalNodes);
 
         long startTime = System.currentTimeMillis();
-        featureCollector.setGameID(0);
-        int max_pos = 1;
-        int counter = 0;
+        int max_pos = 10;
+        int num_pos = 0;
         for (byte[] position : positions) {
-            if (counter == max_pos){break;}
+            if (num_pos == max_pos){break;}
             bot.playGame(position, 15, 15, BoardPanel.SAMEGAME, millisecondsPerMove, featureCollector);
-            featureCollector.addJSON();
-            featureCollector.resetForNewGame();
             Runtime.getRuntime().gc();
-            counter++;
+            num_pos++;
+            featureCollector.gameIDAdd();
         }
-        featureCollector.exportJSON();
         long endTime = System.currentTimeMillis();
 
         System.out.println();
@@ -59,6 +55,10 @@ public class FeatureCollector {
 
     public FeatureCollector() {
         this.resetForNewGame();
+    }
+
+    public void gameIDAdd(){
+        gameID++;
     }
 
     public void resetForNewGame() {
@@ -73,12 +73,15 @@ public class FeatureCollector {
         }};
 
         maxGameStep = 0;
-        gameID++;
     }
 
-    public void findGameFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+    public void findGameFeatures(byte[] searchSpace, byte[] prevSearchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
         for (BoardFeatures gameFeature : gameFeatures.values()) {
-            gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
+            if ((gameFeature instanceof Moves) && (prevSearchSpace != null)){
+                gameFeature.findFeatures(prevSearchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
+            }else{
+                gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
+            }
         }
 
         if (maxGameStep < gameStep) maxGameStep = gameStep;
@@ -89,7 +92,8 @@ public class FeatureCollector {
         nodeEdges.add(edge);
     }
 
-    public void addJSON() {
+    public void exportJSON(int maxDepth, int num) {
+        maxGameStep = maxDepth;
         Clusters clusters = (Clusters) gameFeatures.get("Clusters");
         Moves moves = (Moves) gameFeatures.get("Moves");
         Columns columns = (Columns) gameFeatures.get("Columns");
@@ -125,14 +129,13 @@ public class FeatureCollector {
 
                 gameJSON.put(Integer.toString(i), jsonGameStep);
             }
-            fullJSON.put(Integer.toString(gameID), gameJSON);
+            //fullJSON.put(Integer.toString(gameID), gameJSON);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
 
-    public void exportJSON() {
-        try (FileWriter fileWriter = new FileWriter("data/games.json")) {
-            fileWriter.write(fullJSON.toString());
+        try (FileWriter fileWriter = new FileWriter("data/g"+gameID+"m"+num+".json")) {
+            fileWriter.write(gameJSON.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

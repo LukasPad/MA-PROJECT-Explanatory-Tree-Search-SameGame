@@ -76,6 +76,7 @@ public class Column extends Feature {
 			json.put("colors", this.colors);
 			json.put("height", Integer.valueOf(this.height));
 			json.put("numColors", Integer.valueOf(this.colorCount));
+			json.put("nodeID", nodeID);
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}

@@ -22,6 +22,9 @@ public class Move extends Feature{
 
     public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
 
+        if (move == -1){
+            return new ArrayList<Move>();
+        }
         if (searchSpace[move] == (byte) -1){
             throw new RuntimeException("Invalid move provided: " + move + ", with color " + searchSpace[move]);
         }
@@ -271,6 +274,7 @@ public class Move extends Feature{
             json.put("connectionsCreated", connectionsCreated);
             json.put("connectionsDestroyed", connectionsDestroyed);
             json.put("mctsScore", mctsScore);
+            json.put("nodeID", nodeID);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
