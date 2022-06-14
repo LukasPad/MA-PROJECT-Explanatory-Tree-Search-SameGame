@@ -1,0 +1,13 @@
+#!/bin/sh
+# The first parameter contains the working directory
+# The second program contains the Matlab command(s) to execute
+# Here we define the name of the script
+# -N SameGame
+# Here we say that environment variables will be copied
+#$ -V
+# Here we set the output and error files
+#$ -o myFile.out
+#$ -e myFile.err
+#$ -cwd
+pwd
+java TestPlayout
