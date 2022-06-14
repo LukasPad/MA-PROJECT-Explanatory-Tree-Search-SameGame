@@ -14,8 +14,8 @@ public class Columns extends BoardFeatures {
 
 	public Columns() {}
 
-	public Columns(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
-		findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
+	public Columns(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
+		findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
 	}
 	
 	/**
@@ -24,7 +24,7 @@ public class Columns extends BoardFeatures {
 	 * @return all columns ordered left to right on the board
 	 */
 	@Override
-	public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+	public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
 	    ArrayList<Column> columns = new ArrayList<>();
 	    
 		for (int i = 0; i < xDim; i++) {
@@ -32,7 +32,7 @@ public class Columns extends BoardFeatures {
 			for (int j = 0; j < yDim; j++) {
 				columnSpace[yDim - 1 - j] = searchSpace[j*xDim + i];
 			}
-			columns.add(new Column(columnSpace, gameStep, this.gameID));
+			columns.add(new Column(columnSpace, gameStep, this.gameID, nodeID));
 		}
 		int shortestColumnHeight = 0;
 		Column shortest = columns.get(0);

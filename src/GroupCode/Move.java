@@ -14,12 +14,14 @@ public class Move extends Feature{
     int[] columnRange = new int[3];
     int connectionsCreated;
     int connectionsDestroyed;
+    int nodeID;
 
-    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore){
-        findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore);
+    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID){
+        findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
     }
 
-    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
+
         if (searchSpace[move] == (byte) -1){
             throw new RuntimeException("Invalid move provided: " + move + ", with color " + searchSpace[move]);
         }
@@ -28,6 +30,7 @@ public class Move extends Feature{
         location = move;
         color = searchSpace[move];
         this.gameStep = gameStep;
+        this.nodeID = nodeID;
 
         byte[] boardCopy = Arrays.copyOf(searchSpace, searchSpace.length);
         getRemovedCellsColumns(boardCopy, xDim, yDim, move);

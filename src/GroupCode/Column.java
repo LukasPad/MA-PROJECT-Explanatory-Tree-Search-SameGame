@@ -17,11 +17,13 @@ public class Column extends Feature {
 	ArrayList<Integer> colors = new ArrayList<>();
 	int colorCount = 0;
 	int gameID;
+	int nodeID;
 	
-	public Column(byte[] columnSpace, int gameStep, int gameID) {
+	public Column(byte[] columnSpace, int gameStep, int gameID, int nodeID) {
 		this.gameStep = gameStep;
 		this.column = columnSpace;
 		this.gameID = gameID;
+		this.nodeID = nodeID;
 		attributes();
 	}
 		

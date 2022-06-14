@@ -1,12 +1,15 @@
 package GroupCode;
 
 import OldCode.*;
+
+import OldCode.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FeatureCollector {
@@ -14,6 +17,7 @@ public class FeatureCollector {
     JSONObject gameJSON;
     JSONObject fullJSON = new JSONObject();
     HashMap<String, BoardFeatures> gameFeatures;
+    ArrayList<int[]> nodeEdges = new ArrayList<>();
 
     public static void main(String[] args) {
         FeatureCollector featureCollector = new FeatureCollector();
@@ -35,13 +39,16 @@ public class FeatureCollector {
 
         long startTime = System.currentTimeMillis();
         featureCollector.setGameID(0);
+        int max_pos = 1;
+        int counter = 0;
         for (byte[] position : positions) {
+            if (counter == max_pos){break;}
             bot.playGame(position, 15, 15, BoardPanel.SAMEGAME, millisecondsPerMove, featureCollector);
             featureCollector.addJSON();
             featureCollector.resetForNewGame();
             Runtime.getRuntime().gc();
+            counter++;
         }
-
         featureCollector.exportJSON();
         long endTime = System.currentTimeMillis();
 
@@ -75,6 +82,11 @@ public class FeatureCollector {
         }
 
         if (maxGameStep < gameStep) maxGameStep = gameStep;
+    }
+
+    public void addEdge(int child, int parent){
+        int[] edge = {child, parent};
+        nodeEdges.add(edge);
     }
 
     public void addJSON() {
@@ -117,7 +129,6 @@ public class FeatureCollector {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-    }
 
     public void exportJSON() {
         try (FileWriter fileWriter = new FileWriter("data/games.json")) {

@@ -13,18 +13,18 @@ public class PlayableArea extends BoardFeatures {
         historyplay = new ArrayList<>();
     }
 
-    public PlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore){
-        findFeatures(searchSpace, xDim, yDim, gameStep, moveNum, mctsScore);
+    public PlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore, int nodeID){
+        findFeatures(searchSpace, xDim, yDim, gameStep, moveNum, mctsScore, nodeID);
         findEmpty(searchSpace, xDim, yDim, gameStep, moveNum);
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore, int nodeID) {
         findEmpty(searchSpace, xDim, yDim, gameStep, moveNum);
-        return findPlayableArea(searchSpace, xDim, yDim, gameStep, moveNum);
+        return findPlayableArea(searchSpace, xDim, yDim, gameStep, moveNum, nodeID);
     }
 
-    public ArrayList findPlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum) {
+    public ArrayList findPlayableArea(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int nodeID) {
 //        byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         int empty = -1;
         ArrayList<Integer> color = new ArrayList<>();
@@ -62,7 +62,7 @@ public class PlayableArea extends BoardFeatures {
         }
         int width = mostWidth - leastWidth + 1;
         int height = mostHeight - leastHeight + 1;
-        Area playablearea = new Area(color, playableboard, playableboard.size(), height, width, xDim, yDim, gameStep);
+        Area playablearea = new Area(color, playableboard, playableboard.size(), height, width, xDim, yDim, gameStep, nodeID);
 
         historyplay.add(playablearea);
         return new ArrayList<>(Collections.singleton(playablearea));
@@ -103,7 +103,7 @@ public class PlayableArea extends BoardFeatures {
         }
         int width = mostWidth - leastWidth + 1;
         int height = mostHeight - leastHeight + 1;
-        Area emptyarea = new Area(numberempty, emptyboard, emptyboard.size(), height, width, xDim, yDim, gameStep);
+        Area emptyarea = new Area(numberempty, emptyboard, emptyboard.size(), height, width, xDim, yDim, gameStep, nodeID);
         historyempt.add(emptyarea);
         return new ArrayList<>(Collections.singleton(emptyarea));
     }

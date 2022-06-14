@@ -45,7 +45,9 @@ public class MCTSPlayer implements SameGameBot
 	public final int SIMULATIONS = 3;
 	
 	public int finalMoveSelection = TOPSCORE;
-	
+
+	public UCTNode root;
+
 	public int getMove(byte[] position, int xDim, int yDim, int scoreMode, int time) 
 	{	
 		stop=false;
@@ -115,7 +117,7 @@ public class MCTSPlayer implements SameGameBot
 		UCTNode.totalNodes=0;
 		topScore=Integer.MIN_VALUE;
 		
-		UCTNode root = new UCTNode();
+		this.root = new UCTNode();
 		UCTEdge rootEdge = new UCTEdge();
 		rootEdge.child=root;
 		//root.position=position;

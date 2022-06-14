@@ -16,8 +16,9 @@ public class Area extends Feature{
     int width;
     double[] middleLocation = new double[2];
     ArrayList<Integer> areacolors;
+    int nodeID;
    
-    public Area(ArrayList<Integer> areacolors, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time) {
+    public Area(ArrayList<Integer> areacolors, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time, int nodeID) {
         this.areacolors = areacolors;
         this.shape = shape;
         this.numCells = numCells;
@@ -26,6 +27,7 @@ public class Area extends Feature{
         this.xDim = xDim;
         this.yDim = yDim;
         this.time = time;
+        this.nodeID = nodeID;
         findMiddle();
     }
 
