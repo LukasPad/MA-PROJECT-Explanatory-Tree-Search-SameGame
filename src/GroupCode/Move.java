@@ -20,6 +20,10 @@ public class Move extends Feature{
     }
 
     public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore) {
+        if (searchSpace[move] == (byte) -1){
+            throw new RuntimeException("Invalid move provided: " + move + ", with color " + searchSpace[move]);
+        }
+
         this.mctsScore = mctsScore;
         location = move;
         color = searchSpace[move];
