@@ -7,6 +7,7 @@ public class Clusters extends BoardFeatures {
 
     ArrayList<ArrayList<Cluster>> history = new ArrayList();
     int gameID = 0;
+    byte[] tempBoard;
 
     public Clusters(){}
 
@@ -17,11 +18,11 @@ public class Clusters extends BoardFeatures {
     @Override
     public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
         ArrayList<Cluster> clusters = new ArrayList<>();
-        byte[] tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
+        tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         for (int i = 0; i < searchSpace.length; i++) {
             if (tempBoard[i] != -1) {
                 ArrayList<Integer> clusterShape = new ArrayList<>();
-                clusterShape.addAll(findCluster(tempBoard, xDim, yDim, i, tempBoard[i]));
+                clusterShape.addAll(findCluster(xDim, yDim, i, tempBoard[i]));
                 int mostWidth = -1;
                 int leastWidth = xDim;
                 int mostHeight = -1;
@@ -50,31 +51,31 @@ public class Clusters extends BoardFeatures {
         return clusters;
     }
 
-    private ArrayList<Integer> findCluster(byte[] board, int xDim, int yDim, int location, byte value) {
+    private ArrayList<Integer> findCluster(int xDim, int yDim, int location, byte value) {
         ArrayList<Integer> shape = new ArrayList<>();
-        if (board[location] == value) {
+        if (tempBoard[location] == value) {
             shape.add(location);
-            board[location] = (byte) -1;
+            tempBoard[location] = (byte) -1;
             if ((location - xDim) >= 0) { // Check for tile above
-                ArrayList<Integer> subShape = findCluster(board, xDim, yDim, location - xDim, value);
+                ArrayList<Integer> subShape = findCluster(xDim, yDim, location - xDim, value);
                 if (subShape != null) {
                     shape.addAll(subShape);
                 }
             }
             if (((location - 1) % xDim != xDim - 1) && ((location - 1) >= 0)) { // Check for tile on the left
-                ArrayList<Integer> subShape = findCluster(board, xDim, yDim, location - 1, value);
+                ArrayList<Integer> subShape = findCluster(xDim, yDim, location - 1, value);
                 if (subShape != null) {
                     shape.addAll(subShape);
                 }
             }
             if (((location + 1) % xDim != 0) && ((location + 1) < (xDim * yDim))) { // Check for tile on the right
-                ArrayList<Integer> subShape = findCluster(board, xDim, yDim, location + 1, value);
+                ArrayList<Integer> subShape = findCluster(xDim, yDim, location + 1, value);
                 if (subShape != null) {
                     shape.addAll(subShape);
                 }
             }
             if ((location + xDim) < (xDim * yDim)) { // Check for tile below
-                ArrayList<Integer> subShape = findCluster(board, xDim, yDim, location + xDim, value);
+                ArrayList<Integer> subShape = findCluster(xDim, yDim, location + xDim, value);
                 if (subShape != null) {
                     shape.addAll(subShape);
                 }
