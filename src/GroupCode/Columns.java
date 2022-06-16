@@ -76,9 +76,9 @@ public class Columns extends BoardFeatures {
 	return -1;
 	}
 	
-	public ArrayList<Column> getColumns(int gameStep){
+	public ArrayList<Column> getColumns(int nodeID){
         for (ArrayList<Column> column : this.history){
-            if(column.get(0).gameStep == gameStep){
+            if(column.get(0).nodeID == nodeID){
                 return column;
             }
         }

@@ -26,9 +26,9 @@ public class Moves extends BoardFeatures {
         return history;
     }
 
-    public Move getMove(int gameStep){
+    public Move getMove(int nodeID){
         for (Move move : this.history){
-            if(move.gameStep == gameStep){
+            if(move.nodeID == nodeID){
                 return move;
             }
         }

@@ -115,29 +115,29 @@ public class PlayableArea extends BoardFeatures {
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
-    public Area getCurPlay(int time){
+    public Area getCurPlay(int nodeID){
         for (Area area : this.historyplay){
-            if(area.time == time){
+            if(area.nodeID == nodeID){
                 return area;
             }
         }
         return null;
     }
 
-    public Area getCurEmpty(int time){
+    public Area getCurEmpty(int nodeID){
         for (Area area : this.historyempt){
-            if(area.time == time){
+            if(area.nodeID == nodeID){
                 return area;
             }
         }
         return null;
     }
-    public Area getPlayArea(int time){
-        return this.getCurPlay(time);
+    public Area getPlayArea(int nodeID){
+        return this.getCurPlay(nodeID);
     }
 
-    public Area getEmptyArea(int time){
-        return this.getCurEmpty(time);
+    public Area getEmptyArea(int nodeID){
+        return this.getCurEmpty(nodeID);
     }
 
     public String toJSON(){

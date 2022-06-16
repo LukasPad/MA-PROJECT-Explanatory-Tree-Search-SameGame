@@ -93,9 +93,9 @@ public class Clusters extends BoardFeatures {
         this.gameID = gameID;
     }
 
-    public ArrayList<Cluster> getClusters(int time){
+    public ArrayList<Cluster> getClusters(int nodeID){
         for (ArrayList<Cluster> cluster : this.history){
-            if(cluster.get(0).time == time){
+            if(cluster.get(0).nodeID == nodeID){
                 return cluster;
             }
         }

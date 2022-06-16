@@ -21,9 +21,18 @@ public class GameStates extends BoardFeatures{
         return history;
     }
 
-    public GameState getState(int gameStep) {
-        for (GameState gameState : this.history){
-            if(gameState.gameStep == gameStep){
+    public ArrayList<Integer> getNodeIDs(int gameStep) {
+        ArrayList<Integer> nodeIDs = new ArrayList<>();
+        for (GameState gameState : this.history) {
+            if (gameState.gameStep == gameStep) nodeIDs.add(gameState.nodeID);
+        }
+
+        return nodeIDs;
+    }
+
+    public GameState getState(int nodeID) {
+        for (GameState gameState : this.history) {
+            if(gameState.nodeID == nodeID){
                 return gameState;
             }
         }

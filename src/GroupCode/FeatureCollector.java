@@ -25,7 +25,13 @@ public class FeatureCollector {
 
         MCTSPlayerFC bot = new MCTSPlayerFC();
         bot.output = false;
-        bot.maxNumberOfNodes = 500000;
+        // bot.maxNumberOfNodes = 10;
+        int hours = 7;
+        int runtime = hours * 3600; // runtime in seconds
+        // division by estimation of moves per game
+        // 1 sec ~ 30,000 simulations
+        bot.maxSimulation = 30000 * runtime / (positions.length * 60);
+        // int millisecondsPerMove = Integer.MAX_VALUE;
         int millisecondsPerMove = 100;
 
         System.out.println("Settings:");
@@ -37,19 +43,18 @@ public class FeatureCollector {
         System.out.println("Number of nodes: " + UCTNode.totalNodes);
 
         long startTime = System.currentTimeMillis();
-        int max_pos = 10;
-        int num_pos = 0;
+        long endTime = System.currentTimeMillis();
         for (byte[] position : positions) {
-            if (num_pos == max_pos){break;}
             bot.playGame(position, 15, 15, BoardPanel.SAMEGAME, millisecondsPerMove, featureCollector);
             Runtime.getRuntime().gc();
-            num_pos++;
             featureCollector.gameIDAdd();
+            endTime = System.currentTimeMillis();
+            System.out.println("Game " + featureCollector.gameID + " time: " + ((endTime - startTime) / 1000.0) + " seconds");
         }
-        long endTime = System.currentTimeMillis();
+        endTime = System.currentTimeMillis();
 
         System.out.println();
-        System.out.println("Total time: " + (int) ((endTime - startTime) / 1000.0) + " seconds");
+        System.out.println("Total time: " + ((endTime - startTime) / 1000.0) + " seconds");
         System.exit(0);
     }
 
@@ -93,41 +98,63 @@ public class FeatureCollector {
     }
 
     public void exportJSON(int maxDepth, int num) {
-        maxGameStep = maxDepth;
         Clusters clusters = (Clusters) gameFeatures.get("Clusters");
         Moves moves = (Moves) gameFeatures.get("Moves");
         Columns columns = (Columns) gameFeatures.get("Columns");
         PlayableArea playableArea = (PlayableArea) gameFeatures.get("PlayableArea");
         GameStates gameStates = (GameStates) gameFeatures.get("GameStates");
         try {
-            for (int i = 0; i < maxGameStep; i++) {
+            for (int gameStep = 0; gameStep < maxDepth; gameStep++) {
+                //game state json
                 JSONObject jsonGameStep = new JSONObject();
 
-                //game state json
-                jsonGameStep.put("GameState", gameStates.getState(i).toJSON());
+                // get all nodes at this gameStep from the gameState feature
+                ArrayList<Integer> nodeIDs = gameStates.getNodeIDs(gameStep);
+                for (Integer nodeID : nodeIDs) {
+                    JSONObject jsonNode = new JSONObject();
+                    jsonNode.put("GameState", gameStates.getState(nodeID).toJSON());
 
-                //cluster json
-                JSONArray jsonCluster = new JSONArray();
-                for (Cluster cluster : clusters.getClusters(i)) {
-                    jsonCluster.put(cluster.toJSON());
+                    //cluster json
+                    JSONArray jsonCluster = new JSONArray();
+                    for (Cluster cluster : clusters.getClusters(nodeID)) {
+                        jsonCluster.put(cluster.toJSON());
+                    }
+                    jsonNode.put("Clusters", jsonCluster);
+
+                    //move json
+                    Move move = moves.getMove(nodeID);
+                    if (move != null){
+                        jsonNode.put("Move", move.toJSON());
+                    } else {
+                        jsonNode.put("Move", "root node");
+                    }
+
+                    //columns json
+                    JSONArray jsonColumns = new JSONArray();
+                    for (Column column : columns.getColumns(nodeID)) {
+                        jsonColumns.put(column.toJSON());
+                    }
+                    jsonNode.put("Columns", jsonColumns);
+
+                    //play area json
+                    Area playArea = playableArea.getPlayArea(nodeID);
+                    if (playArea != null) {
+                        jsonNode.put("PlayArea", playArea.toJSON());
+                    } else {
+                        jsonNode.put("PlayArea", "no tiles left");
+                    }
+
+                    Area emptyArea = playableArea.getEmptyArea(nodeID);
+                    if (emptyArea != null) {
+                        jsonNode.put("PlayArea", emptyArea.toJSON());
+                    } else {
+                        jsonNode.put("PlayArea", "board is full");
+                    }
+
+                    jsonGameStep.put(Integer.toString(nodeID), jsonNode);
                 }
-                jsonGameStep.put("Clusters", jsonCluster);
 
-                //move json
-                jsonGameStep.put("Move", moves.getMove(i).toJSON());
-
-                //columns json
-                JSONArray jsonColumns = new JSONArray();
-                for (Column column : columns.getColumns(i)) {
-                    jsonColumns.put(column.toJSON());
-                }
-                jsonGameStep.put("Columns", jsonColumns);
-
-                //play area json
-                jsonGameStep.put("PlayArea", playableArea.getPlayArea(i).toJSON());
-                jsonGameStep.put("EmptyArea", playableArea.getEmptyArea(i).toJSON());
-
-                gameJSON.put(Integer.toString(i), jsonGameStep);
+                gameJSON.put(Integer.toString(gameStep), jsonGameStep);
             }
             //fullJSON.put(Integer.toString(gameID), gameJSON);
         } catch (JSONException e) {
