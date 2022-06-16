@@ -25,14 +25,8 @@ public class FeatureCollector {
 
         MCTSPlayerFC bot = new MCTSPlayerFC();
         bot.output = false;
-        // bot.maxNumberOfNodes = 10;
-        int hours = 7;
-        int runtime = hours * 3600; // runtime in seconds
-        // division by estimation of moves per game
-        // 1 sec ~ 30,000 simulations
-        bot.maxSimulation = 30000 * runtime / (positions.length * 60);
-        // int millisecondsPerMove = Integer.MAX_VALUE;
-        int millisecondsPerMove = 100;
+        bot.maxNumberOfNodes = 500000;
+        int millisecondsPerMove = 1000;
 
         System.out.println("Settings:");
         System.out.println("UCT Constant: " + bot.UCTConstant);
@@ -43,18 +37,19 @@ public class FeatureCollector {
         System.out.println("Number of nodes: " + UCTNode.totalNodes);
 
         long startTime = System.currentTimeMillis();
-        long endTime = System.currentTimeMillis();
+        int max_pos = 100000;
+        int num_pos = 0;
         for (byte[] position : positions) {
+            if (num_pos == max_pos){break;}
             bot.playGame(position, 15, 15, BoardPanel.SAMEGAME, millisecondsPerMove, featureCollector);
             Runtime.getRuntime().gc();
+            num_pos++;
             featureCollector.gameIDAdd();
-            endTime = System.currentTimeMillis();
-            System.out.println("Game " + featureCollector.gameID + " time: " + ((endTime - startTime) / 1000.0) + " seconds");
         }
-        endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
         System.out.println();
-        System.out.println("Total time: " + ((endTime - startTime) / 1000.0) + " seconds");
+        System.out.println("Total time: " + (int) ((endTime - startTime) / 1000.0) + " seconds");
         System.exit(0);
     }
 
@@ -156,6 +151,7 @@ public class FeatureCollector {
 
                 gameJSON.put(Integer.toString(gameStep), jsonGameStep);
             }
+            gameJSON.put("Edges", nodeEdges);
             //fullJSON.put(Integer.toString(gameID), gameJSON);
         } catch (JSONException e) {
             throw new RuntimeException(e);
