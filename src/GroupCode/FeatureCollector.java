@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FeatureCollector {
-    int gameID, maxGameStep;
+    int gameID;
     JSONObject gameJSON;
     HashMap<String, BoardFeatures> gameFeatures;
     ArrayList<int[]> nodeEdges = new ArrayList<>();
@@ -72,7 +72,7 @@ public class FeatureCollector {
             put("GameStates", new GameStates());
         }};
 
-        maxGameStep = 0;
+        nodeEdges = new ArrayList<>();
     }
 
     public void findGameFeatures(byte[] searchSpace, byte[] prevSearchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
@@ -83,8 +83,6 @@ public class FeatureCollector {
                 gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
             }
         }
-
-        if (maxGameStep < gameStep) maxGameStep = gameStep;
     }
 
     public void addEdge(int child, int parent){
