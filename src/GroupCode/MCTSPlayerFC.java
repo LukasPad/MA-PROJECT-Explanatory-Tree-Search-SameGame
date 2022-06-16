@@ -23,7 +23,7 @@ public class MCTSPlayerFC extends MCTSPlayer {
             topScore = Integer.MIN_VALUE;
             byte[] tempBoard = new byte[225];
             System.arraycopy(position, 0, tempBoard, 0, xDim*yDim);
-            int move = getMove(position, xDim, yDim, scoreMode, time / 35);
+            int move = getMove(position, xDim, yDim, scoreMode, time);
 
             int colorPlayed = position[move];
             int bloks = SameGameBoard.makeMove(position, move, move % 15, move / 15, colorPlayed);
@@ -35,10 +35,7 @@ public class MCTSPlayerFC extends MCTSPlayer {
             saveTree(root, tempBoard);
 
             moveCounter++;
-            //System.out.println("Move: "+moveCounter);
-            if (moveCounter % 10 == 0){
-                //SameGameBoard.println(position, 15, 15);
-            }
+            System.out.println("Game" + featureCollector.gameID + ", Move: "+moveCounter);
         }
 
         if (SameGameBoard.isEmpty(position, 15, 15)) gameScore += 1000;
