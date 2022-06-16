@@ -72,7 +72,7 @@ public class FeatureCollector {
             put("GameStates", new GameStates());
         }};
 
-        nodeEdges = new ArrayList<>();
+        nodeEdges.clear();
     }
 
     public void findGameFeatures(byte[] searchSpace, byte[] prevSearchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
