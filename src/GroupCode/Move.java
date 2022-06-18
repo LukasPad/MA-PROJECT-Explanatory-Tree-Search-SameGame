@@ -17,14 +17,10 @@ public class Move extends Feature{
     int nodeID;
 
     public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID){
-        findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
-    }
-
-    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
-
-        if (move == -1){
-            return new ArrayList<Move>();
+        if (searchSpace == null) {
+            throw new RuntimeException("Board is empty before move was played!");
         }
+
         if (searchSpace[move] == (byte) -1){
             throw new RuntimeException("Invalid move provided: " + move + ", with color " + searchSpace[move]);
         }
@@ -37,10 +33,6 @@ public class Move extends Feature{
 
         byte[] boardCopy = Arrays.copyOf(searchSpace, searchSpace.length);
         getRemovedCellsColumns(boardCopy, xDim, yDim, move);
-
-        ArrayList<Move> res = new ArrayList<>();
-        res.add(this);
-        return res;
     }
 
     private void getRemovedCellsColumns(byte[] searchSpace, int xDim, int yDim, int pos) {

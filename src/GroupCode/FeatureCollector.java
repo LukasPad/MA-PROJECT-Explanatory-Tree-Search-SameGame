@@ -1,8 +1,6 @@
 package GroupCode;
 
 import OldCode.*;
-
-import OldCode.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +75,7 @@ public class FeatureCollector {
 
     public void findGameFeatures(byte[] searchSpace, byte[] prevSearchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
         for (BoardFeatures gameFeature : gameFeatures.values()) {
-            if ((gameFeature instanceof Moves) && (prevSearchSpace != null)){
+            if (gameFeature instanceof Moves){
                 gameFeature.findFeatures(prevSearchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
             }else{
                 gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
