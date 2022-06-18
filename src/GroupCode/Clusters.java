@@ -44,7 +44,9 @@ public class Clusters extends BoardFeatures {
                 int width = mostWidth - leastWidth + 1;
                 int height = mostHeight - leastHeight + 1;
                 byte color = searchSpace[i];
-                clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim, gameStep, gameID, nodeID));
+                if(clusterShape.size() > 2){
+                    clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim, gameStep, gameID, nodeID));
+                }
             }
         }
         history.add(clusters);
@@ -96,11 +98,13 @@ public class Clusters extends BoardFeatures {
 
     public ArrayList<Cluster> getClusters(int nodeID){
         for (ArrayList<Cluster> cluster : this.history){
-            if(cluster.get(0).nodeID == nodeID){
-                return cluster;
+            if(cluster.size()>1){
+                if(cluster.get(0).nodeID == nodeID){
+                    return cluster;
+                }
             }
         }
-        return null;
+        return new ArrayList<Cluster>();
     }
 
     public ArrayList<Cluster> getClustersExSingletons(int time){
