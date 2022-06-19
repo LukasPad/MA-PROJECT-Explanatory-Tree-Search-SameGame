@@ -38,7 +38,8 @@ public class BoardPanel extends JPanel
 	private HistoryPanel history;
 	
 	private boolean humanPlay=true;
-	
+	private boolean xaiPlay=false;
+
 	//private static int score=0;
 	private static int sgScore=0;
 	private static int bbScore=0;
@@ -189,6 +190,16 @@ public class BoardPanel extends JPanel
 	public void setHumanPlay(boolean mode)
 	{
 		humanPlay=mode;
+	}
+
+	public void setXaiPlay(boolean mode)
+	{
+		xaiPlay=mode;
+	}
+
+	public boolean getXaiPlay()
+	{
+		return xaiPlay;
 	}
 	
 	public byte[] getPosition()

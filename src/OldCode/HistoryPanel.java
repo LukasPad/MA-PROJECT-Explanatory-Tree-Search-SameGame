@@ -205,8 +205,13 @@ public class HistoryPanel extends JPanel
 		t.setScore(bbScoreHistory[selected],boardPanel.BUBBLEBREAKER);
 		t.setScore(cmScoreHistory[selected],boardPanel.CLICKOMANIA);
 		t.setEnded(false);
-		
+
 		update();
+
+		if (boardPanel.getXaiPlay()){
+			boardPanel.setHumanPlay(false);
+			t.startIt();
+		}
 	}
 	
 	public void newGame(byte[] position)
@@ -255,6 +260,10 @@ public class HistoryPanel extends JPanel
 	public int getLastScore(int mode)
 	{
 		return getScore(sgScoreHistory.length-1,mode);
+	}
+
+	public void enableContinueButton(){
+		continueButton.setEnabled(true);
 	}
 	
 	private class ContinueButtonActionListener implements ActionListener

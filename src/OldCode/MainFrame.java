@@ -1,5 +1,7 @@
 package OldCode;
 
+import GroupCode.MCTSPlayerFC;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,6 +44,7 @@ public class MainFrame extends JFrame
 	private BoardPanel boardPanel;
 	JRadioButtonMenuItem humanPlay;
 	JRadioButtonMenuItem computerPlay;
+	JRadioButtonMenuItem xaiPlay;
 	JRadioButtonMenuItem rectangles;
 	JRadioButtonMenuItem ellipses;
 	JCheckBoxMenuItem letters;
@@ -50,6 +53,7 @@ public class MainFrame extends JFrame
 	private ComputerPlayThread t;
 	private PlayerActionListener pal;
 	private PlayerActionListener cal;
+	private PlayerActionListener xal;
 	private Settings settings = new Settings();
 	
 	public MainFrame()
@@ -158,6 +162,11 @@ public class MainFrame extends JFrame
 		computerPlay.addActionListener(cal);
 		group.add(computerPlay);
 		player.add(computerPlay);
+		xaiPlay = new JRadioButtonMenuItem("MCTS + Explanations)");
+		xal = new PlayerActionListener(t);
+		xaiPlay.addActionListener(xal);
+		group.add(xaiPlay);
+		player.add(xaiPlay);
 		
 		score = new JMenu("Score");
 		menuBar.add(score);
@@ -236,6 +245,7 @@ public class MainFrame extends JFrame
 		t.stopIt();
 		pal.setThread(t);
 		cal.setThread(t);
+		xal.setThread(t);
 	}
 	
 	public void setEnded(boolean b)
@@ -322,9 +332,19 @@ public class MainFrame extends JFrame
 				((BoardPanel)boardPanel).setScore(t.getScore(boardPanel.SAMEGAME),t.getScore(boardPanel.BUBBLEBREAKER),t.getScore(boardPanel.CLICKOMANIA));
 				t.stopIt();
 			}
-			if (computerPlay.isSelected())
+			if (computerPlay.isSelected() || xaiPlay.isSelected())
 			{
 				boardPanel.getHistoryPanel().select(boardPanel.getHistoryPanel().getHistorySize()-1);
+
+				if (xaiPlay.isSelected()) {
+					MCTSPlayerFC bot = new MCTSPlayerFC();
+					t.setBot(bot);
+					settings.setTimePerMove(100);
+					boardPanel.setXaiPlay(true);
+				} else {
+					boardPanel.setXaiPlay(false);
+				}
+
 				((BoardPanel)boardPanel).setHumanPlay(false);
 				t.setScore(((BoardPanel)boardPanel).getHistoryPanel().getLastScore(boardPanel.SAMEGAME),boardPanel.SAMEGAME);
 				t.setScore(((BoardPanel)boardPanel).getHistoryPanel().getLastScore(boardPanel.BUBBLEBREAKER),boardPanel.BUBBLEBREAKER);

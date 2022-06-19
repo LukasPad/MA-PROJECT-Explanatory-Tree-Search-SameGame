@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 public class ComputerPlayThread extends Thread 
 {
 	boolean stop=true;
+	boolean makeMove=false;
 	private BoardPanel boardPanel;
 	private ScorePanel scorePanel;
 	private HistoryPanel history;
@@ -114,6 +115,16 @@ public class ComputerPlayThread extends Thread
 					//SameGameBoard.println(position, xDim, yDim);
 					int move = bot.getMove(position, xDim, yDim,boardPanel.getScoreMode(),boardPanel.getMainFrame().getSettings().getTimePerMove());
 					//SameGameBoard.println(position, xDim, yDim);
+
+					// interrupt mcts for explanations
+					if (!makeMove && boardPanel.getXaiPlay()) {
+						stopIt();
+						history.enableContinueButton();
+						boardPanel.setHumanPlay(true);
+						makeMove = true;
+					}
+
+
 					if ((!stop)&&(move!=-1))
 					{
 						int blocks = SameGameBoard.makeMove(position, xDim, yDim, move%xDim, move/xDim, position[move],(byte)-1);
@@ -157,6 +168,8 @@ public class ComputerPlayThread extends Thread
 							JOptionPane.showMessageDialog(null, "Game Over");
 							//System.exit(0);
 						}
+
+						if (boardPanel.getXaiPlay()) makeMove=false;
 					}
 				}
 			}
