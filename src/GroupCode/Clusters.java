@@ -8,6 +8,7 @@ public class Clusters extends BoardFeatures {
     ArrayList<ArrayList<Cluster>> history = new ArrayList();
     int gameID = 0;
     byte[] tempBoard;
+    int minClusterSize = 2;
 
     public Clusters(){}
 
@@ -44,7 +45,7 @@ public class Clusters extends BoardFeatures {
                 int width = mostWidth - leastWidth + 1;
                 int height = mostHeight - leastHeight + 1;
                 byte color = searchSpace[i];
-                if(clusterShape.size() > 2){
+                if(clusterShape.size() >= minClusterSize){
                     clusters.add(new Cluster(color, clusterShape, clusterShape.size(), height, width, xDim, yDim, gameStep, gameID, nodeID));
                 }
             }
@@ -142,6 +143,14 @@ public class Clusters extends BoardFeatures {
             }
         }
         return biggest;
+    }
+
+    public void generateIDs(){
+        int counter = 0;
+        for(Cluster cluster:history.get(0)){
+            cluster.setID(counter);
+            counter++;
+        }
     }
 
     public String toJSON(){

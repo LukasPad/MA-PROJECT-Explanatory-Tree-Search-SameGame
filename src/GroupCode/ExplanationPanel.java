@@ -6,12 +6,14 @@ import OldCode.SameGameBoard;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ExplanationPanel extends JTextArea {
     private int xSizePanel = 300;
     private int ySizePanel = 300;
     private BoardPanel boardPanel;
     private MCTSPlayer bot;
+    private ArrayList<Cluster> moves;
 
     private String explanation;
 
@@ -41,6 +43,7 @@ public class ExplanationPanel extends JTextArea {
         // TODO: give explanation based on analysis and extracted features
 
         // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
+
         explanation = getExplanation(boardX, boardY);
         this.repaint();
     }
@@ -48,11 +51,37 @@ public class ExplanationPanel extends JTextArea {
     private String getExplanation(int boardX, int boardY) {
         String ex = "";
         ex += "MCTS simulations: " + bot.totalSimulations + "\n";
+
+        boolean debug = false;
+        if (debug){
+            ex += "Available Moves: \n";
+            for (int possibleMove : SameGameBoard.generateMoves(boardPanel.getPosition())){
+                ex += "Move: x=" + possibleMove%15 +", y="+ Math.floor(possibleMove/15) +  "\n";
+            }
+        }
+
+        int move = 15*boardY + boardX;
+        int moveID = -1;
+        for(Cluster cluster: moves){
+            for (int tile:cluster.shape){
+                if (tile == move){
+                    moveID = cluster.ID;
+                    break;
+                }
+            }
+        }
+
         if (SameGameBoard.legalMove(boardPanel.getPosition(), boardPanel.getXDim(), boardPanel.getYDim(), boardX, boardY)) {
-            return ex + "Explanation for move " + boardX + ", " + boardY + "!";
+            return ex + "Explanation for move " + moveID + "!";
         } else {
             return ex + "Not a legal move!";
         }
+    }
+
+    public void congregateMoves(){
+        Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
+        movesGenerator.generateIDs();
+        moves = movesGenerator.getClusters(0);
     }
 
     public void setBoardPanel(BoardPanel boardPanel) {

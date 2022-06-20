@@ -120,6 +120,7 @@ public class ComputerPlayThread extends Thread
 					if (!makeMove && boardPanel.getXaiPlay()) {
 						stopIt();
 						history.enableContinueButton();
+						boardPanel.explanationPanel.congregateMoves();
 						boardPanel.setHumanPlay(true);
 						makeMove = true;
 					}

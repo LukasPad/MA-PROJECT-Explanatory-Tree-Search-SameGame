@@ -18,6 +18,7 @@ public class Cluster extends Feature {
     int time;
     int gameID;
     int nodeID;
+    int ID = 0;
 
     public Cluster(byte color, ArrayList<Integer> shape, int numCells, int height, int width, int xDim, int yDim, int time, int gameID, int nodeID) {
         this.color = color;
@@ -48,6 +49,10 @@ public class Cluster extends Feature {
             this.middleLocation[0] = leastWidth + tempWidth / 2;
             this.middleLocation[1] = leastHeight + tempHeight / 2;
         }
+    }
+
+    public void setID(int id){
+        this.ID = id;
     }
 
     public void print(){
