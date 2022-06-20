@@ -1,5 +1,6 @@
 package OldCode;
 
+import GroupCode.ExplanationPanel;
 import GroupCode.MCTSPlayerFC;
 
 import java.awt.BorderLayout;
@@ -42,6 +43,7 @@ public class MainFrame extends JFrame
 	
 	public static Color[] colors = new Color[10];
 	private BoardPanel boardPanel;
+	private ExplanationPanel explanationPanel;
 	JRadioButtonMenuItem humanPlay;
 	JRadioButtonMenuItem computerPlay;
 	JRadioButtonMenuItem xaiPlay;
@@ -92,17 +94,26 @@ public class MainFrame extends JFrame
 		p.setLayout(new BorderLayout());
 		p.add(scorePanel,BorderLayout.WEST);
 		HistoryPanel h = new HistoryPanel(this);
+
+		// xai
+		explanationPanel = new ExplanationPanel();
+		explanationPanel.setSize(300, 300);
+		JPanel left = new JPanel();
+		left.setLayout(new BorderLayout());
+		left.add(explanationPanel, BorderLayout.CENTER);
+		this.add(left, BorderLayout.WEST);
 		
 		//this.add(scorePanel,BorderLayout.EAST);
-		boardPanel = new BoardPanel(position,15,15,5,(ScorePanel)scorePanel,this, h);
+		boardPanel = new BoardPanel(position,15,15,5,(ScorePanel)scorePanel,this, h, explanationPanel);
 		boardPanel.setSize(300, 300);
+		explanationPanel.setBoardPanel(boardPanel);
 		
 		h.setBoardPanel(boardPanel);
 		
 		h.addMove(position,"Start",0,0,0,true);
 		p.add(h,BorderLayout.EAST);
 		this.add(p,BorderLayout.EAST);
-		
+
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
 		
@@ -117,8 +128,8 @@ public class MainFrame extends JFrame
 		Toolkit tool = Toolkit.getDefaultToolkit();
 		Dimension d = tool.getScreenSize();
 		
-		this.setPreferredSize(new Dimension(700,600));
-		this.setBounds(((int)(d.getWidth()/2))-350, ((int)(d.getHeight()/2))-300, 700, 600);
+		this.setPreferredSize(new Dimension(1000,600));
+		this.setBounds(((int)(d.getWidth()/2))-350, ((int)(d.getHeight()/2))-300, 1000, 600);
 		
 		JMenuBar menuBar;
 		JMenu game,player,view,score, about;
@@ -339,6 +350,7 @@ public class MainFrame extends JFrame
 				if (xaiPlay.isSelected()) {
 					MCTSPlayerFC bot = new MCTSPlayerFC();
 					t.setBot(bot);
+					explanationPanel.setBot(bot);
 					settings.setTimePerMove(100);
 					boardPanel.setXaiPlay(true);
 				} else {

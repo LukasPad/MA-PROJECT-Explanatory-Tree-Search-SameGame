@@ -1,10 +1,8 @@
 package OldCode;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import GroupCode.ExplanationPanel;
+
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -34,6 +32,7 @@ public class BoardPanel extends JPanel
 	private BoardMouseMotionListener mouseMovementListener;
 	
 	ScorePanel scorePanel;
+	ExplanationPanel explanationPanel;
 	JFrame mainFrame;
 	private HistoryPanel history;
 	
@@ -50,7 +49,7 @@ public class BoardPanel extends JPanel
 	public static final int CLICKOMANIA=3;
 	private static int currentMode=1;
 	
-	public BoardPanel(byte[] b, int bXSize, int bYSize, int colors, ScorePanel score, JFrame f, HistoryPanel h) 
+	public BoardPanel(byte[] b, int bXSize, int bYSize, int colors, ScorePanel score, JFrame f, HistoryPanel h, ExplanationPanel ex)
 	{
 		this.setBackground(Color.BLACK);
 		this.setForeground(Color.BLACK);
@@ -62,6 +61,7 @@ public class BoardPanel extends JPanel
 		boardYSize=bYSize;
 		numberOfColors=colors;
 		history=h;
+		explanationPanel=ex;
 		addMouseListener(new BoardMouseListener(this));
 		mouseMovementListener = new BoardMouseMotionListener(score,board);;
 		this.addMouseMotionListener(mouseMovementListener);
@@ -440,6 +440,13 @@ public class BoardPanel extends JPanel
 		public void mouseMoved(MouseEvent e) 
 		{
 			computePossibleScore(e.getX(), e.getY());
+			if (xaiPlay){
+				int boardX = e.getX()/fieldWidth;
+				int boardY = e.getY()/fieldHeight;
+				if (boardX < boardXSize && boardY < boardYSize) {
+					explanationPanel.updateExplanation(boardX, boardY);
+				}
+			}
 	    }
 		
 		public void computePossibleScore(int x, int y)
