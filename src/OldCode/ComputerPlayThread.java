@@ -119,6 +119,7 @@ public class ComputerPlayThread extends Thread
 					// interrupt mcts for explanations
 					if (!makeMove && boardPanel.getXaiPlay()) {
 						stopIt();
+						boardPanel.explanationPanel.updateFeatures();
 						history.enableContinueButton();
 						boardPanel.explanationPanel.congregateMoves();
 						boardPanel.setHumanPlay(true);

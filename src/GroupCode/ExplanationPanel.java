@@ -1,8 +1,6 @@
 package GroupCode;
 
-import OldCode.BoardPanel;
-import OldCode.MCTSPlayer;
-import OldCode.SameGameBoard;
+import OldCode.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +9,13 @@ import java.util.ArrayList;
 public class ExplanationPanel extends JTextArea {
     private int xSizePanel = 300;
     private int ySizePanel = 300;
+
+    private int xDim, yDim, nodeID;
     private BoardPanel boardPanel;
     private MCTSPlayer bot;
     private ArrayList<Cluster> moves;
+
+    private FeatureCollector featureCollector;
 
     private String explanation;
 
@@ -23,6 +25,8 @@ public class ExplanationPanel extends JTextArea {
         setEditable(false);
         setFocusable(false);
         setBackground(new Color(236,233,216));
+        featureCollector = new FeatureCollector();
+        nodeID=0;
     }
 
     @Override
@@ -77,6 +81,78 @@ public class ExplanationPanel extends JTextArea {
             return ex + "Not a legal move!";
         }
     }
+
+    public void congregateMoves(){
+        Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
+        movesGenerator.generateIDs();
+        moves = movesGenerator.getClusters(0);
+    }
+
+    public void updateFeatures(){
+        xDim = boardPanel.getXDim();
+        yDim = boardPanel.getYDim();
+        getTreeFeautures(bot.root, boardPanel.getPosition());
+    }
+
+    public void getTreeFeautures(UCTNode n, byte[] pos){
+        featureCollector.resetForNewGame();
+        saveTree(n, 0 , pos, null, -1 , -1);
+    }
+
+    public int saveTree(UCTNode n, int depth, byte[] pos, byte[] prevPos, int parentID, int move)
+    {
+        if (n==null || n.simulations < 10) return 0;
+
+        nodeID++;
+        int nID = nodeID;
+
+        if (parentID != -1) {
+            featureCollector.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.topScore, nID);
+        } else {
+            featureCollector.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.topScore, nID);
+        }
+        featureCollector.addEdge(nID, parentID);
+
+        int max_depth = depth;
+        if (parentID == -1){
+            for (UCTEdge loop=n.child;loop!=null;loop=loop.sibling)
+            {
+                int colorPlayed = pos[loop.move];
+                byte[] position = new byte[255];
+                System.arraycopy(pos, 0, position, 0, xDim*yDim);
+                SameGameBoard.makeMove(position, loop.move, loop.move % 15, loop.move / 15, colorPlayed);
+                SameGameBoard.dropDownStones(position, 15, 15);
+
+                int child_depth = saveTree(loop.child, depth+1, position, pos, nID, loop.move);
+                if (child_depth > max_depth){
+                    max_depth = child_depth;
+                }
+            }
+        } else {
+            if (n.child != null){
+                UCTEdge bestChild = n.child;
+                for (UCTEdge loop=n.child;loop!=null;loop=loop.sibling){
+                    if (loop.topScore > bestChild.topScore){
+                        bestChild = loop;
+                    }
+                }
+
+                int colorPlayed = pos[bestChild.move];
+                byte[] position = new byte[255];
+                System.arraycopy(pos, 0, position, 0, xDim*yDim);
+                SameGameBoard.makeMove(position, bestChild.move, bestChild.move % 15, bestChild.move / 15, colorPlayed);
+                SameGameBoard.dropDownStones(position, 15, 15);
+
+                int child_depth = saveTree(bestChild.child, depth+1, position, pos, nID, bestChild.move);
+                if (child_depth > max_depth){
+                    max_depth = child_depth;
+                }
+            }
+        }
+
+        return max_depth;
+    }
+
 
     public void congregateMoves(){
         Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
