@@ -61,7 +61,7 @@ public class MainFrame extends JFrame
 	public MainFrame()
 	{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle("PROGRAMNAME");
+		this.setTitle("Samegame");
 		this.setLayout(new BorderLayout());
 		this.addWindowListener(new MainFrameWindowListener());
 		
@@ -351,7 +351,7 @@ public class MainFrame extends JFrame
 					MCTSPlayerFC bot = new MCTSPlayerFC();
 					t.setBot(bot);
 					explanationPanel.setBot(bot);
-					settings.setTimePerMove(100);
+					settings.setTimePerMove(1000);
 					boardPanel.setXaiPlay(true);
 				} else {
 					boardPanel.setXaiPlay(false);

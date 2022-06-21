@@ -5,6 +5,7 @@ import OldCode.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ExplanationPanel extends JTextArea {
     private int xSizePanel = 300;
@@ -14,6 +15,7 @@ public class ExplanationPanel extends JTextArea {
     private BoardPanel boardPanel;
     private MCTSPlayer bot;
     private ArrayList<Cluster> moves;
+    private HashMap<Integer, UCTNode> moveNodePairs = new HashMap<>();
 
     private FeatureCollector featureCollector;
 
@@ -47,7 +49,6 @@ public class ExplanationPanel extends JTextArea {
         // TODO: give explanation based on analysis and extracted features
 
         // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
-
         explanation = getExplanation(boardX, boardY);
         this.repaint();
     }
@@ -76,7 +77,7 @@ public class ExplanationPanel extends JTextArea {
         }
 
         if (SameGameBoard.legalMove(boardPanel.getPosition(), boardPanel.getXDim(), boardPanel.getYDim(), boardX, boardY)) {
-            return ex + "Explanation for move " + moveID + "!";
+            return ex + "Explanation for move: " + moveID + "\nSims for this move: " + moveNodePairs.get(moveID).simulations +"\nScore for this move: " + moveNodePairs.get(moveID).topScore;
         } else {
             return ex + "Not a legal move!";
         }
@@ -86,6 +87,17 @@ public class ExplanationPanel extends JTextArea {
         Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
         movesGenerator.generateIDs();
         moves = movesGenerator.getClusters(0);
+        for (UCTEdge loop=bot.root.child;loop!=null;loop=loop.sibling){
+            for(Cluster cluster : moves){
+                for (int tile:cluster.shape){
+                    if (tile == loop.move){
+                        moveNodePairs.put(cluster.ID, loop.child);
+                        break;
+                    }
+                }
+            }
+        }
+        return;
     }
 
     public void updateFeatures(){
@@ -151,13 +163,6 @@ public class ExplanationPanel extends JTextArea {
         }
 
         return max_depth;
-    }
-
-
-    public void congregateMoves(){
-        Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
-        movesGenerator.generateIDs();
-        moves = movesGenerator.getClusters(0);
     }
 
     public void setBoardPanel(BoardPanel boardPanel) {
