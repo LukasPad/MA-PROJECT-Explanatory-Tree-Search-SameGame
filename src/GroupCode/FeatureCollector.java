@@ -23,7 +23,7 @@ public class FeatureCollector {
 
         MCTSPlayerFC bot = new MCTSPlayerFC();
         bot.output = false;
-        bot.maxNumberOfNodes = 500000;
+        bot.maxNumberOfNodes = 5000;
         int millisecondsPerMove = 1000;
 
         System.out.println("Settings:");
