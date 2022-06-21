@@ -4,7 +4,16 @@ import OldCode.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class ExplanationPanel extends JTextArea {
     private int xSizePanel = 300;
@@ -16,6 +25,8 @@ public class ExplanationPanel extends JTextArea {
     private ArrayList<Cluster> moves;
 
     private FeatureCollector featureCollector;
+    private HashMap<Integer, HashMap<String, Float>> nodeFeatureScores;
+    private HashMap<String, HashMap<String, Float>> featureImportanceLookupTable;
 
     private String explanation;
 
@@ -27,6 +38,26 @@ public class ExplanationPanel extends JTextArea {
         setBackground(new Color(236,233,216));
         featureCollector = new FeatureCollector();
         nodeID=0;
+        importFeatureImportance();
+    }
+
+    private void importFeatureImportance() {
+        featureImportanceLookupTable = new HashMap<>();
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/FeatureValues.json"));
+            JSONObject numClusters = (JSONObject) featureValues.get("num_clusters");
+            featureImportanceLookupTable.put("numClusters", new HashMap<>(){{
+                put("3", (float) (double) numClusters.get("3"));
+                put("4", (float) (double) numClusters.get("4"));
+                put("5", (float) (double) numClusters.get("5"));
+                put("6", (float) (double) numClusters.get("6"));
+                put("6+", (float) (double) numClusters.get("6+"));
+            }});
+
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -38,13 +69,7 @@ public class ExplanationPanel extends JTextArea {
     }
 
     public void updateExplanation(int boardX, int boardY) {
-        // TODO (E): aggregate cluster to one explanation
-        // TODO (B): feature collector -> run only once per mcts move (either via boardBanel.humanPlay or computerPlayThread or var in explanationPanel)
-        // TODO (B): give feature representations: for tree features just iterate with findGameFeatures over all nodes
-        // TODO: extract specific features from feature collector and filter by relevance based on the occurrences in the other nodes (and then compare them either to best move or selected move)
-        // TODO: take mcts score into consideration for explanations
-        // TODO: compare the extracted features to the lookup table aka. results of data analysis
-        // TODO: give explanation based on analysis and extracted features
+        // TODO: update to new json file
 
         // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
 
@@ -97,6 +122,68 @@ public class ExplanationPanel extends JTextArea {
     public void getTreeFeautures(UCTNode n, byte[] pos){
         featureCollector.resetForNewGame();
         saveTree(n, 0 , pos, null, -1 , -1);
+        updateFeatureScores();
+    }
+
+    private void updateFeatureScores() {
+        nodeFeatureScores = new HashMap<>();
+        GameStates gameStates = (GameStates) featureCollector.gameFeatures.get("GameStates");
+        Clusters clusters = (Clusters) featureCollector.gameFeatures.get("Clusters");
+
+        // get all the features and their averages
+        float avgNumCluster3 = 0;
+        float avgNumCluster4 = 0;
+        float avgNumCluster5 = 0;
+        float avgNumCluster6 = 0;
+        float avgNumCluster6plus = 0;
+        ArrayList<Integer> nodeIDs = gameStates.getNodeIDs(1);
+        for (Integer nodeID : nodeIDs) {
+            HashMap<String, Float> nodeScores = new HashMap<>();
+
+            int numCluster3 = clusters.getClusterCount(nodeID, 3 ,false);
+            nodeScores.put("numCluster3", (float) numCluster3);
+            avgNumCluster3 += numCluster3 / (float) nodeIDs.size();
+
+            int numCluster4 = clusters.getClusterCount(nodeID, 4 ,false);
+            nodeScores.put("numCluster4", (float) numCluster4);
+            avgNumCluster4 += numCluster4 / (float) nodeIDs.size();
+
+            int numCluster5 = clusters.getClusterCount(nodeID, 5 ,false);
+            nodeScores.put("numCluster5", (float) numCluster5);
+            avgNumCluster5 += numCluster5 / (float) nodeIDs.size();
+
+            int numCluster6 = clusters.getClusterCount(nodeID, 6 ,false);
+            nodeScores.put("numCluster6", (float) numCluster6);
+            avgNumCluster6 += numCluster6 / (float) nodeIDs.size();
+
+            int numCluster6plus = clusters.getClusterCount(nodeID, 7 ,true);
+            nodeScores.put("numCluster6plus", (float) numCluster6plus);
+            avgNumCluster6plus += numCluster6plus / (float) nodeIDs.size();
+
+            nodeFeatureScores.put(nodeID, nodeScores);
+        }
+
+        float finalAvgNumCluster3 = avgNumCluster3;
+        float finalAvgNumCluster4 = avgNumCluster4;
+        float finalAvgNumCluster5 = avgNumCluster5;
+        float finalAvgNumCluster6 = avgNumCluster6;
+        float finalAvgNumCluster6plus = avgNumCluster6plus;
+        nodeFeatureScores.forEach((i, nodeScores) -> {
+            nodeScores.forEach((feature, value) -> {
+                if (Objects.equals(feature, "numCluster3")){
+                    nodeScores.put(feature, (value - finalAvgNumCluster3) / finalAvgNumCluster3 * featureImportanceLookupTable.get("numClusters").get("3"));
+                } else if (Objects.equals(feature, "numCluster4")) {
+                    nodeScores.put(feature, (value - finalAvgNumCluster4) / finalAvgNumCluster4 * featureImportanceLookupTable.get("numClusters").get("4"));
+                } else if (Objects.equals(feature, "numCluster5")) {
+                    nodeScores.put(feature, (value - finalAvgNumCluster5) / finalAvgNumCluster5 * featureImportanceLookupTable.get("numClusters").get("5"));
+                } else if (Objects.equals(feature, "numCluster6")) {
+                    nodeScores.put(feature, (value - finalAvgNumCluster6) / finalAvgNumCluster6 * featureImportanceLookupTable.get("numClusters").get("6"));
+                } else if (Objects.equals(feature, "numCluster6plus")) {
+                    nodeScores.put(feature, (value - finalAvgNumCluster6plus) / finalAvgNumCluster6plus * featureImportanceLookupTable.get("numClusters").get("6+"));
+                }
+            });
+        });
+        System.out.println();
     }
 
     public int saveTree(UCTNode n, int depth, byte[] pos, byte[] prevPos, int parentID, int move)
@@ -153,12 +240,6 @@ public class ExplanationPanel extends JTextArea {
         return max_depth;
     }
 
-
-    public void congregateMoves(){
-        Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
-        movesGenerator.generateIDs();
-        moves = movesGenerator.getClusters(0);
-    }
 
     public void setBoardPanel(BoardPanel boardPanel) {
         this.boardPanel = boardPanel;

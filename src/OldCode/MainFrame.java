@@ -173,7 +173,7 @@ public class MainFrame extends JFrame
 		computerPlay.addActionListener(cal);
 		group.add(computerPlay);
 		player.add(computerPlay);
-		xaiPlay = new JRadioButtonMenuItem("MCTS + Explanations)");
+		xaiPlay = new JRadioButtonMenuItem("MCTS + Explanations");
 		xal = new PlayerActionListener(t);
 		xaiPlay.addActionListener(xal);
 		group.add(xaiPlay);

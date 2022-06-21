@@ -145,6 +145,19 @@ public class Clusters extends BoardFeatures {
         return biggest;
     }
 
+    public int getClusterCount(int nodeID, int clusterSize, boolean includeGreaterThan){
+        int res = 0;
+        for (Cluster cluster : this.getClusters(nodeID)) {
+            if (includeGreaterThan) {
+                if (cluster.numCells >= clusterSize) res++;
+            } else {
+                if (cluster.numCells == clusterSize) res++;
+            }
+        }
+
+        return res;
+    }
+
     public void generateIDs(){
         int counter = 0;
         for(Cluster cluster:history.get(0)){
