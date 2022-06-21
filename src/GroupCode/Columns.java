@@ -104,6 +104,35 @@ public class Columns extends BoardFeatures {
 		return counter;
 	}
 
+	public int getHighestColumnHeight(int nodeID){
+		int height= 0;
+		for (Column column : getColumns(nodeID)) {
+			height = Math.max(column.getHeight(), height);
+		}
+		return height;
+	}
+
+	public float getAvgColumnHeight(int nodeID){
+		float res = 0;
+		float numColumns = 0;
+		for (Column column : getColumns(nodeID)) {
+			res += column.height;
+			numColumns++;
+		}
+
+		return res / numColumns;
+	}
+
+	public float getAvgNumColorsPerColumn(int nodeID){
+		float res = 0;
+		float numColumns = 0;
+		for (Column column : getColumns(nodeID)) {
+			res += column.colorCount;
+			numColumns++;
+		}
+		return res / numColumns;
+	}
+
 	public String toJSON(){
 		String fullJSON = "";
 		for(ArrayList<Column> columns:this.history){

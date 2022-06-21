@@ -133,8 +133,8 @@ public class Clusters extends BoardFeatures {
         return singletons;
     }
 
-    public Cluster getBiggestCluster(int time){
-        ArrayList<Cluster> clusterList = this.getClusters(time);
+    public Cluster getBiggestCluster(int nodeID){
+        ArrayList<Cluster> clusterList = this.getClusters(nodeID);
 
         Cluster biggest = clusterList.get(0);
         for(Cluster cluster : clusterList){
@@ -156,6 +156,17 @@ public class Clusters extends BoardFeatures {
         }
 
         return res;
+    }
+
+    public float getAvgClusterSize(int nodeID){
+        float res = 0;
+        float numClusters = 0;
+        for (Cluster cluster : getClusters(nodeID)) {
+            numClusters++;
+            res += cluster.numCells;
+        }
+
+        return res / numClusters;
     }
 
     public void generateIDs(){

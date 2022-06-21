@@ -304,5 +304,12 @@ public class Move extends Feature{
     public int getConnectionsDelta() {
         return (this.connectionsCreated - this.connectionsDestroyed);
     }
-    
+
+    public int getMoveColumn() {
+        return location % 15;
+    }
+
+    public int getMoveHeight() {
+        return location / 15;
+    }
 }

@@ -27,7 +27,7 @@ public class ExplanationPanel extends JTextArea {
 
     private FeatureCollector featureCollector;
     private HashMap<Integer, HashMap<String, Float>> nodeFeatureScores;
-    private HashMap<String, HashMap<String, Float>> featureImportanceLookupTable;
+    private HashMap<String, Float> featureImportanceLookupTable;
 
     private String explanation;
 
@@ -46,16 +46,30 @@ public class ExplanationPanel extends JTextArea {
         featureImportanceLookupTable = new HashMap<>();
         JSONParser parser = new JSONParser();
         try {
-            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/FeatureValues.json"));
-            JSONObject numClusters = (JSONObject) featureValues.get("num_clusters");
-            featureImportanceLookupTable.put("numClusters", new HashMap<>(){{
-                put("3", (float) (double) numClusters.get("3"));
-                put("4", (float) (double) numClusters.get("4"));
-                put("5", (float) (double) numClusters.get("5"));
-                put("6", (float) (double) numClusters.get("6"));
-                put("6+", (float) (double) numClusters.get("6+"));
-            }});
-
+            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs.json"));
+            featureImportanceLookupTable = new HashMap<>() {{
+                // put("mctsScore", (float) (double) featureValues.get("mctsScore"));
+                put("moveNumber", (float) (double) featureValues.get("Move number"));
+                put("nodeID", (float) (double) featureValues.get("nodeID"));
+                put("numRemovedCells", (float) (double) featureValues.get("numRemovedCells"));
+                put("numRemovedColumns", (float) (double) featureValues.get("numRemovedColumns"));
+                put("color", (float) (double) featureValues.get("color"));
+                put("connectionsDestroyed", (float) (double) featureValues.get("connectionsDestroyed"));
+                put("connectionsCreated", (float) (double) featureValues.get("connectionsCreated"));
+                put("moveColumn", (float) (double) featureValues.get("move column"));
+                put("moveHeight", (float) (double) featureValues.get("move height"));
+                put("avgClusterSize", (float) (double) featureValues.get("average cluster size"));
+                put("largestClusterSize", (float) (double) featureValues.get("largest cluster"));
+                put("numCluster2", (float) (double) featureValues.get("size 2 clusters"));
+                put("numCluster3", (float) (double) featureValues.get("size 3 clusters"));
+                put("numCluster4", (float) (double) featureValues.get("size 4 clusters"));
+                put("numCluster5", (float) (double) featureValues.get("size 5 clusters"));
+                put("numCluster6", (float) (double) featureValues.get("size 6 clusters"));
+                put("numCluster7plus", (float) (double) featureValues.get("size 7+ clusters"));
+                put("avgColHeight", (float) (double) featureValues.get("average column height"));
+                put("highestColumn", (float) (double) featureValues.get("highest column"));
+                put("avgNumColorsPerColumn", (float) (double) featureValues.get("average colors per column"));
+            }};
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -140,61 +154,101 @@ public class ExplanationPanel extends JTextArea {
         nodeFeatureScores = new HashMap<>();
         GameStates gameStates = (GameStates) featureCollector.gameFeatures.get("GameStates");
         Clusters clusters = (Clusters) featureCollector.gameFeatures.get("Clusters");
+        Columns columns = (Columns) featureCollector.gameFeatures.get("Columns");
+        Moves moves = (Moves) featureCollector.gameFeatures.get("Moves");
 
         // get all the features and their averages
-        float avgNumCluster3 = 0;
-        float avgNumCluster4 = 0;
-        float avgNumCluster5 = 0;
-        float avgNumCluster6 = 0;
-        float avgNumCluster6plus = 0;
+        HashMap<String, Float> avgValues = new HashMap<>();
         ArrayList<Integer> nodeIDs = gameStates.getNodeIDs(1);
         for (Integer nodeID : nodeIDs) {
             HashMap<String, Float> nodeScores = new HashMap<>();
 
+            // nodeScores.put("mctsScore", (float) mctsScore);
+            // nodeScores.put("nodeID", (float) nodeID);
+
+            // Move features
+            // TODO: what is moveNumber? nodeScores.put("moveNumber", (float) moveNumber);
+            // TODO: split up colors into boolean? yellow (yes/no) => more significant correlations maybe
+            //  nodeScores.put("color", (float) color);
+
+            int numRemovedCells = moves.getMove(nodeID).getNumRemovedCells();
+            nodeScores.put("numRemovedCells", (float) numRemovedCells);
+            avgValues.put("numRemovedCells", avgValues.getOrDefault("numRemovedCells", 0.0f) + numRemovedCells / (float) nodeIDs.size());
+
+            int numRemovedColumns = moves.getMove(nodeID).getNumRemovedColumns();
+            nodeScores.put("numRemovedColumns", (float) numRemovedColumns);
+            avgValues.put("numRemovedColumns", avgValues.getOrDefault("numRemovedColumns", 0.0f) + numRemovedColumns / (float) nodeIDs.size());
+
+            int connectionsDestroyed = moves.getMove(nodeID).getConnectionsDestroyed();
+            nodeScores.put("connectionsDestroyed", (float) connectionsDestroyed);
+            avgValues.put("connectionsDestroyed", avgValues.getOrDefault("connectionsDestroyed", 0.0f) + connectionsDestroyed / (float) nodeIDs.size());
+
+            int connectionsCreated = moves.getMove(nodeID).getConnectionsCreated();
+            nodeScores.put("connectionsCreated", (float) connectionsCreated);
+            avgValues.put("connectionsCreated", avgValues.getOrDefault("connectionsCreated", 0.0f) + connectionsCreated / (float) nodeIDs.size());
+
+            int moveColumn = moves.getMove(nodeID).getMoveColumn();
+            nodeScores.put("moveColumn", (float) moveColumn);
+            avgValues.put("moveColumn", avgValues.getOrDefault("moveColumn", 0.0f) + moveColumn / (float) nodeIDs.size());
+
+            int moveHeight = moves.getMove(nodeID).getMoveHeight();
+            nodeScores.put("moveHeight", (float) moveHeight);
+            avgValues.put("moveHeight", avgValues.getOrDefault("moveHeight", 0.0f) + moveHeight / (float) nodeIDs.size());
+
+            // Column features
+            float avgColHeight = columns.getAvgColumnHeight(nodeID);
+            nodeScores.put("avgColHeight", (float) avgColHeight);
+            avgValues.put("avgColHeight", avgValues.getOrDefault("avgColHeight", 0.0f) + avgColHeight / (float) nodeIDs.size());
+
+            int highestColumn = columns.getHighestColumnHeight(nodeID);
+            nodeScores.put("highestColumn", (float) highestColumn);
+            avgValues.put("highestColumn", avgValues.getOrDefault("highestColumn", 0.0f) + highestColumn / (float) nodeIDs.size());
+
+            float avgNumColorsPerColumn = columns.getAvgNumColorsPerColumn(nodeID);
+            nodeScores.put("avgNumColorsPerColumn", (float) avgNumColorsPerColumn);
+            avgValues.put("avgNumColorsPerColumn", avgValues.getOrDefault("avgNumColorsPerColumn", 0.0f) + avgNumColorsPerColumn / (float) nodeIDs.size());
+
+            // Cluster features
+            float avgClusterSize = clusters.getAvgClusterSize(nodeID);
+            nodeScores.put("avgClusterSize", avgClusterSize);
+            avgValues.put("avgClusterSize", avgValues.getOrDefault("avgClusterSize", 0.0f) + avgClusterSize / (float) nodeIDs.size());
+
+            int largestClusterSize = clusters.getBiggestCluster(nodeID).numCells;
+            nodeScores.put("largestClusterSize", (float) largestClusterSize);
+            avgValues.put("largestClusterSize", avgValues.getOrDefault("largestClusterSize", 0.0f) + largestClusterSize / (float) nodeIDs.size());
+
+            int numCluster2 = clusters.getClusterCount(nodeID, 2 ,false);
+            nodeScores.put("numCluster2", (float) numCluster2);
+            avgValues.put("numCluster2", avgValues.getOrDefault("numCluster2", 0.0f) + numCluster2 / (float) nodeIDs.size());
+
             int numCluster3 = clusters.getClusterCount(nodeID, 3 ,false);
             nodeScores.put("numCluster3", (float) numCluster3);
-            avgNumCluster3 += numCluster3 / (float) nodeIDs.size();
+            avgValues.put("numCluster3", avgValues.getOrDefault("numCluster3", 0.0f) + numCluster3 / (float) nodeIDs.size());
 
             int numCluster4 = clusters.getClusterCount(nodeID, 4 ,false);
             nodeScores.put("numCluster4", (float) numCluster4);
-            avgNumCluster4 += numCluster4 / (float) nodeIDs.size();
+            avgValues.put("numCluster4", avgValues.getOrDefault("numCluster4", 0.0f) + numCluster4 / (float) nodeIDs.size());
 
             int numCluster5 = clusters.getClusterCount(nodeID, 5 ,false);
             nodeScores.put("numCluster5", (float) numCluster5);
-            avgNumCluster5 += numCluster5 / (float) nodeIDs.size();
+            avgValues.put("numCluster5", avgValues.getOrDefault("numCluster5", 0.0f) + numCluster5 / (float) nodeIDs.size());
 
             int numCluster6 = clusters.getClusterCount(nodeID, 6 ,false);
             nodeScores.put("numCluster6", (float) numCluster6);
-            avgNumCluster6 += numCluster6 / (float) nodeIDs.size();
+            avgValues.put("numCluster6", avgValues.getOrDefault("numCluster6", 0.0f) + numCluster6 / (float) nodeIDs.size());
 
-            int numCluster6plus = clusters.getClusterCount(nodeID, 7 ,true);
-            nodeScores.put("numCluster6plus", (float) numCluster6plus);
-            avgNumCluster6plus += numCluster6plus / (float) nodeIDs.size();
+            int numCluster7plus = clusters.getClusterCount(nodeID, 7 ,true);
+            nodeScores.put("numCluster7plus", (float) numCluster7plus);
+            avgValues.put("numCluster7plus", avgValues.getOrDefault("numCluster7plus", 0.0f) + numCluster7plus / (float) nodeIDs.size());
 
             nodeFeatureScores.put(nodeID, nodeScores);
         }
 
-        float finalAvgNumCluster3 = avgNumCluster3;
-        float finalAvgNumCluster4 = avgNumCluster4;
-        float finalAvgNumCluster5 = avgNumCluster5;
-        float finalAvgNumCluster6 = avgNumCluster6;
-        float finalAvgNumCluster6plus = avgNumCluster6plus;
         nodeFeatureScores.forEach((i, nodeScores) -> {
             nodeScores.forEach((feature, value) -> {
-                if (Objects.equals(feature, "numCluster3")){
-                    nodeScores.put(feature, (value - finalAvgNumCluster3) / finalAvgNumCluster3 * featureImportanceLookupTable.get("numClusters").get("3"));
-                } else if (Objects.equals(feature, "numCluster4")) {
-                    nodeScores.put(feature, (value - finalAvgNumCluster4) / finalAvgNumCluster4 * featureImportanceLookupTable.get("numClusters").get("4"));
-                } else if (Objects.equals(feature, "numCluster5")) {
-                    nodeScores.put(feature, (value - finalAvgNumCluster5) / finalAvgNumCluster5 * featureImportanceLookupTable.get("numClusters").get("5"));
-                } else if (Objects.equals(feature, "numCluster6")) {
-                    nodeScores.put(feature, (value - finalAvgNumCluster6) / finalAvgNumCluster6 * featureImportanceLookupTable.get("numClusters").get("6"));
-                } else if (Objects.equals(feature, "numCluster6plus")) {
-                    nodeScores.put(feature, (value - finalAvgNumCluster6plus) / finalAvgNumCluster6plus * featureImportanceLookupTable.get("numClusters").get("6+"));
-                }
+                nodeScores.put(feature, ((value - avgValues.get(feature)) / (avgValues.get(feature) + 1)) * featureImportanceLookupTable.get(feature));
             });
         });
-        System.out.println();
     }
 
     public int saveTree(UCTNode n, int depth, byte[] pos, byte[] prevPos, int parentID, int move)
