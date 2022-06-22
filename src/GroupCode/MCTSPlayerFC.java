@@ -63,11 +63,11 @@ public class MCTSPlayerFC extends MCTSPlayer {
 
         if (parentID != -1)
         {
-            fc_tree.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.topScore, nID);
+            fc_tree.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.average, nID);
         }
         else
         {
-            fc_tree.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.topScore, nID);
+            fc_tree.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.average, nID);
         }
         fc_tree.addEdge(nID, parentID);
 
@@ -91,7 +91,7 @@ public class MCTSPlayerFC extends MCTSPlayer {
             if (!(n.child == null)){
                 UCTEdge bestChild = n.child;
                 for (UCTEdge loop=n.child;loop!=null;loop=loop.sibling){
-                    if (loop.topScore > bestChild.topScore){
+                    if (loop.average > bestChild.average){
                         bestChild = loop;
                     }
                 }

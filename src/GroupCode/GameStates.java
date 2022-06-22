@@ -10,7 +10,7 @@ public class GameStates extends BoardFeatures{
         history = new ArrayList<>();
     }
     @Override
-    public ArrayList<GameState> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
+    public ArrayList<GameState> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID) {
         GameState gameState = new GameState(searchSpace, mctsScore, gameStep, nodeID);
         history.add(gameState);
         return new ArrayList<>(Collections.singleton(gameState));

@@ -7,7 +7,7 @@ public abstract class BoardFeatures {
     protected int gameID;
     protected int nodeID;
 
-    public abstract ArrayList<?> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID);
+    public abstract ArrayList<?> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID);
 
     public abstract ArrayList<?> getFeatures();
 

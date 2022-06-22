@@ -16,7 +16,7 @@ public class UCTNode
 		public UCTEdge parent;
 		public long hash = 0;
 		public UCTNode ttNext = null;
-		
+		public int nodeID;
 		public static int totalNodes = 0;
 		//public static byte[] simulationPosition;
 		

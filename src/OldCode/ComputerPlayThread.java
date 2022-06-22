@@ -123,6 +123,7 @@ public class ComputerPlayThread extends Thread
 						history.enableContinueButton();
 						boardPanel.explanationPanel.congregateMoves();
 						boardPanel.setHumanPlay(true);
+						System.out.println("MCTS Finished");
 						makeMove = true;
 					}
 

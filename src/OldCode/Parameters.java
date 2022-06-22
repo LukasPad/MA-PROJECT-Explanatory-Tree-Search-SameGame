@@ -4,10 +4,10 @@ public class Parameters
 {
 	//Parameters for UCT tree part
 	//public static double UCTConstant=4.31;
-	public static double UCTConstant=0.1;
+	public static double UCTConstant=1;
 	//public static double DeviationConstant=96.67;
 	//public static double DeviationConstant=32;
-	public static double DeviationConstant=10000;
+	public static double DeviationConstant=200000;
 	//public static int numberOfVisitsBeforeExpanding = 13;
 	public static int numberOfVisitsBeforeExpanding = 10;
 	public static double topScoreWeight = 0.02;

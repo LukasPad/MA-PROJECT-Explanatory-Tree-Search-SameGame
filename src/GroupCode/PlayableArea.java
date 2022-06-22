@@ -19,7 +19,7 @@ public class PlayableArea extends BoardFeatures {
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, int mctsScore, int nodeID) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int moveNum, float mctsScore, int nodeID) {
         findEmpty(searchSpace, xDim, yDim, gameStep, moveNum);
         return findPlayableArea(searchSpace, xDim, yDim, gameStep, moveNum, nodeID);
     }

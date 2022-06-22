@@ -15,7 +15,7 @@ public class Moves extends BoardFeatures {
     }
 
     @Override
-    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
+    public ArrayList<Move> findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID) {
         Move cur_move = null;
         if (move != -1 && searchSpace != null) {
             cur_move = new Move(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);

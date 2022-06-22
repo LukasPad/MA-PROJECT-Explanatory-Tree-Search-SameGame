@@ -17,7 +17,7 @@ public class Clusters extends BoardFeatures {
     }
 
     @Override
-    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID) {
+    public ArrayList findFeatures(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID) {
         ArrayList<Cluster> clusters = new ArrayList<>();
         tempBoard = Arrays.copyOf(searchSpace, searchSpace.length);
         for (int i = 0; i < searchSpace.length; i++) {

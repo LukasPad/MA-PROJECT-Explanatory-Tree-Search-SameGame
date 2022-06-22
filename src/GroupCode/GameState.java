@@ -5,9 +5,10 @@ import org.json.JSONObject;
 
 public class GameState extends Feature{
     byte[] board;
-    int score, gameStep, nodeID;
+    int gameStep, nodeID;
+    private float score;
 
-    public GameState(byte[] board, int score, int gameStep, int nodeID) {
+    public GameState(byte[] board, float score, int gameStep, int nodeID) {
         this.board = board;
         this.score = score;
         this.gameStep = gameStep;

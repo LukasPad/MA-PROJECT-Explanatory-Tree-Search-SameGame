@@ -24,6 +24,7 @@ public class ExplanationPanel extends JTextArea {
     private MCTSPlayer bot;
     private ArrayList<Cluster> moves;
     private HashMap<Integer, UCTNode> moveNodePairs = new HashMap<>();
+    private int bestMove;
 
     private FeatureCollector featureCollector;
     private HashMap<Integer, HashMap<String, Float>> nodeFeatureScores;
@@ -95,11 +96,24 @@ public class ExplanationPanel extends JTextArea {
         String ex = "";
         ex += "MCTS simulations: " + bot.totalSimulations + "\n";
 
+        int bestX = 0;
+        int bestY = 0;
+        for (UCTEdge loop=bot.root.child;loop!=null;loop=loop.sibling) {
+            if (moveNodePairs.get(bestMove) == loop.child){
+                bestX = loop.move%15;
+                bestY = (int) Math.floor(loop.move/15);
+            }
+        }
+
+        ex += "MCTS Calculated move: Move " + bestMove + "\n";
+        ex += "MCTS Move Location: x=" + bestX  + ", y=" + bestY + "\n";
+        ex += "Current Location: x=" + boardX + ", y=" + boardY + "\n\n";
+
         boolean debug = false;
         if (debug){
             ex += "Available Moves: \n";
             for (int possibleMove : SameGameBoard.generateMoves(boardPanel.getPosition())){
-                ex += "Move: x=" + possibleMove%15 +", y="+ Math.floor(possibleMove/15) +  "\n";
+                ex += "Move: x=" + possibleMove%15 +", y="+ Math.floor(possibleMove/15) +  "\n\n";
             }
         }
 
@@ -115,26 +129,81 @@ public class ExplanationPanel extends JTextArea {
         }
 
         if (SameGameBoard.legalMove(boardPanel.getPosition(), boardPanel.getXDim(), boardPanel.getYDim(), boardX, boardY)) {
-            return ex + "Explanation for move: " + moveID + "\nSims for this move: " + moveNodePairs.get(moveID).simulations +"\nScore for this move: " + moveNodePairs.get(moveID).topScore;
+            ex += "Explanation for Move " + moveID + ": \n";
+            ex += "Sims for this move: " + moveNodePairs.get(moveID).simulations +"\n";
+            ex += "Score for this move: " + moveNodePairs.get(moveID).topScore + "\n";
+            ex += "----------------\n";
+            ex += "Feature Scores for this move: \n";
+            String bestFeatureName = "";
+            double bestScore = 0;
+            for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
+                if(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key)  > bestScore){
+                    bestScore = nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
+                    bestFeatureName = key;
+                }
+            }
+            ex += "Best Feature: " + bestFeatureName + "\n\n";
+
+            bestFeatureName = "";
+            bestScore = 0;
+            for (String key : nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).keySet()){
+                if(nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) > bestScore){
+                    bestScore = nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
+                    bestFeatureName = key;
+                }
+            }
+            ex += "Biggest diff w/ MCTS: " + bestFeatureName + "\n";
+            ex += "Difference in Score: " + bestScore;
+
+            if (nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID) != null){
+                for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
+                    ex += key + ": " + nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) + "\n";
+
+                }
+            }
+
         } else {
-            return ex + "Not a legal move!";
+            ex += "Not a legal move!";
         }
+        return ex;
     }
 
     public void congregateMoves(){
         Clusters movesGenerator = new Clusters(boardPanel.getPosition(), 15, 15,0, -1, -1);
         movesGenerator.generateIDs();
         moves = movesGenerator.getClusters(0);
-        for (UCTEdge loop=bot.root.child;loop!=null;loop=loop.sibling){
-            for(Cluster cluster : moves){
-                for (int tile:cluster.shape){
-                    if (tile == loop.move){
-                        moveNodePairs.put(cluster.ID, loop.child);
-                        break;
+        int bestScore = 0;
+        if (!moves.isEmpty()){
+            for (UCTEdge loop=bot.root.child;loop!=null;loop=loop.sibling){
+                for(Cluster cluster : moves){
+                    for (int tile:cluster.shape){
+                        if (tile == loop.move){
+                            moveNodePairs.put(cluster.ID, loop.child);
+                            if (loop.topScore > bestScore){
+                                bestMove = cluster.ID;
+                                bestScore = loop.topScore;
+                            }
+                            break;
+                        }
                     }
                 }
             }
         }
+
+        System.out.print("Moves: [");
+        for (Cluster move : moves){
+            System.out.print(move.ID + ", ");
+        }
+        System.out.print("]");
+        System.out.println();
+
+        System.out.print("Moves in nodeFeatureScores: [");
+        for (int move : nodeFeatureScores.keySet()){
+            System.out.print(move + ", ");
+        }
+        System.out.print("]");
+        System.out.println();
+
         return;
     }
 
@@ -159,7 +228,13 @@ public class ExplanationPanel extends JTextArea {
 
         // get all the features and their averages
         HashMap<String, Float> avgValues = new HashMap<>();
-        ArrayList<Integer> nodeIDs = gameStates.getNodeIDs(1);
+
+        //ArrayList<Integer> nodeIDs = gameStates.getNodeIDs(1);
+        ArrayList<Integer> nodeIDs = new ArrayList<>();
+        for (UCTEdge loop=bot.root.child;loop!=null;loop=loop.sibling){
+            nodeIDs.add(loop.child.nodeID);
+        }
+
         for (Integer nodeID : nodeIDs) {
             HashMap<String, Float> nodeScores = new HashMap<>();
 
@@ -246,18 +321,18 @@ public class ExplanationPanel extends JTextArea {
 
         nodeFeatureScores.forEach((i, nodeScores) -> {
             nodeScores.forEach((feature, value) -> {
-                nodeScores.put(feature, ((value - avgValues.get(feature)) / (avgValues.get(feature) + 1)) * featureImportanceLookupTable.get(feature));
+                nodeScores.put(feature, ((value/* - avgValues.get(feature)*/) / (avgValues.get(feature) + 1)) * featureImportanceLookupTable.get(feature));
             });
         });
     }
 
     public int saveTree(UCTNode n, int depth, byte[] pos, byte[] prevPos, int parentID, int move)
     {
-        if (n==null || n.simulations < 10) return 0;
+        if (n==null /*|| n.simulations < 10*/) return 0;
 
         nodeID++;
         int nID = nodeID;
-
+        n.nodeID = nID;
         if (parentID != -1) {
             featureCollector.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.topScore, nID);
         } else {

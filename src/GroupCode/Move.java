@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class Move extends Feature{
-    private int location, numRemovedCells, numRemovedColumns, mctsScore;
+    private int location, numRemovedCells, numRemovedColumns;
+    private float mctsScore;
     int gameStep;
     private byte color;
     int[] columnRange = new int[3];
@@ -16,7 +17,7 @@ public class Move extends Feature{
     int connectionsDestroyed;
     int nodeID;
 
-    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, int mctsScore, int nodeID){
+    public Move(byte[] searchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID){
         if (searchSpace == null) {
             throw new RuntimeException("Board is empty before move was played!");
         }
