@@ -64,7 +64,7 @@ public class ExplanationPanel extends JTextArea {
         featureImportanceLookupTable = new HashMap<>();
         JSONParser parser = new JSONParser();
         try {
-            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs.json"));
+            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs2.json"));
             featureImportanceLookupTable = new HashMap<>() {{
                 put("gameScore", (float) (double) featureValues.get("score"));
                 put("moveNumber", (float) (double) featureValues.get("Move number"));
