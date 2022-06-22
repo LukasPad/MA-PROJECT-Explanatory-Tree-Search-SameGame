@@ -4,11 +4,10 @@ import OldCode.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.List;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -97,7 +96,7 @@ public class ExplanationPanel extends JTextArea {
     private void generateExplanationMap() {
         explanations.put("gameScore", "%s will result in a higher score");
         explanations.put("numRemovedCells", "%s removes a lot of cells");
-        explanations.put("numRemovedColumns", "%s will shift the board to the left");
+        explanations.put("numRemovedColumns", "%s doesn't empty any columns");
         //explanations.put("color", "This move removes a lot of cells");
         explanations.put("connectionsDestroyed", "%s preserves a lot of the connections on the board now");
         explanations.put("connectionsCreated", "%s creates a lot of new connections");
@@ -123,7 +122,7 @@ public class ExplanationPanel extends JTextArea {
     }
 
     public void updateExplanation(int boardX, int boardY) {
-        if (moves == null){
+        if (moves != null){
             // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
             explanation = getExplanation(boardX, boardY);
             this.repaint();
@@ -170,22 +169,40 @@ public class ExplanationPanel extends JTextArea {
             ex += "Explanation for Move " + moveID + ": \n";
             ex += "MCTS thinks this move will lead to a final score of: " + moveNodePairs.get(moveID).average + "\n\n";
             ex += "---------------------------------------------\n\n";
-            ex += "What is good about this move?\n";
 
-            String bestFeatureExplanation = "";
-            double bestScore = 0;
-            for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
-                if(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key)  > bestScore){
-                    bestScore = nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
-                    bestFeatureExplanation = explanations.get(key);
+            Map sortedMap = MapUtil.sortByValue(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID));
+
+            ArrayList<String> sortedMoveExplanationsPositive = new ArrayList<>();
+            ArrayList<String> sortedMoveExplanationsNegative = new ArrayList<>();
+            ArrayList<String> keys = new ArrayList<>();
+            sortedMap.forEach((K, V) -> {
+                if((float) V >= 0.0){
+                    sortedMoveExplanationsPositive.add(explanations.get((String) K));
+                }else if((float) V < 0.0){
+                    sortedMoveExplanationsNegative.add(0, explanations.get((String) K));
                 }
+                keys.add((String) K);
+            });
+
+            ex += "What is good about this move?\n";
+            for (int i = 0; i < 3; i++) {
+                ex += "- " + String.format(sortedMoveExplanationsPositive.get(i), "This move") + "\n";
             }
-            bestFeatureExplanation = String.format(bestFeatureExplanation, "This move");
-            ex += bestFeatureExplanation + "\n\n";
+            ex += "What is bad about this move?\n";
+            for (int i = 0; i <3; i++) {
+                ex += "- " + String.format(sortedMoveExplanationsNegative.get(i), "This move") + "\n";
+            }
+
+            System.out.println("----------------------------------------");
+
+            for (String key : keys) {
+                System.out.println(key + ": " + nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key));
+            }
+            
 
             ex += "What is better about MCTS's move?\n";
             String mctsExplanation = "";
-            bestScore = 0;
+            float bestScore = 0;
             for (String key : nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).keySet()){
                 if(nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) > bestScore){
                     bestScore = nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);

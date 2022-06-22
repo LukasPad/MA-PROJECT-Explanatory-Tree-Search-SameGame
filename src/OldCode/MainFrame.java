@@ -96,7 +96,7 @@ public class MainFrame extends JFrame
 		HistoryPanel h = new HistoryPanel(this);
 
 		// xai
-		int exPanelWidth = 500;
+		int exPanelWidth = 600;
 		explanationPanel = new ExplanationPanel(exPanelWidth, 300);
 		explanationPanel.setSize(exPanelWidth, 300);
 		JPanel left = new JPanel();
