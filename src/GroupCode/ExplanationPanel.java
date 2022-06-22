@@ -190,8 +190,12 @@ public class ExplanationPanel extends JTextArea {
         if (moves != null){
             // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
             explanation = getExplanation(boardX, boardY);
-            this.repaint();
+        } else if (boardX == -1 && boardY == -1){
+            explanation = "Hover over a tile on the board to see the explanations";
+        } else {
+            explanation = "Explanations are being generated...";
         }
+        this.repaint();
     }
 
     private String getExplanation(int boardX, int boardY) {
@@ -347,8 +351,12 @@ public class ExplanationPanel extends JTextArea {
         xDim = boardPanel.getXDim();
         yDim = boardPanel.getYDim();
         getTreeFeautures(bot.root, boardPanel.getPosition());
+        congregateMoves();
     }
 
+    public void resetForHistorySwitch(){
+        moves = null;
+    }
     public void getTreeFeautures(UCTNode n, byte[] pos){
         featureCollector.resetForNewGame();
         saveTree(n, 0 , pos, null, -1 , -1);

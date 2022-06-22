@@ -352,6 +352,7 @@ public class MainFrame extends JFrame
 					MCTSPlayerFC bot = new MCTSPlayerFC();
 					t.setBot(bot);
 					explanationPanel.setBot(bot);
+					explanationPanel.updateExplanation(-1, -1);
 					settings.setTimePerMove(1000);
 					boardPanel.setXaiPlay(true);
 				} else {

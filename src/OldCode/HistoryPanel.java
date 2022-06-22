@@ -157,16 +157,21 @@ public class HistoryPanel extends JPanel
 		for (int i=0;i<p.length;i++) newPos[i]=p[i];
 		
 		boardPanel.setPosition(newPos, boardPanel.getXDim(), boardPanel.getYDim(), boardPanel.getNumberofColors());
-		
-		if (number==positionHistory.size()-1)
-		{
-			boardPanel.setHumanPlay(true);
-			continueButton.setEnabled(false);
-		}
-		else 
-		{
+
+		if (!boardPanel.getXaiPlay()) {
+			if (number != positionHistory.size() - 1) {
+				boardPanel.setHumanPlay(true);
+				continueButton.setEnabled(false);
+			} else {
+				boardPanel.setHumanPlay(false);
+				continueButton.setEnabled(true);
+			}
+		} else {
 			boardPanel.setHumanPlay(false);
-			continueButton.setEnabled(true);
+			boardPanel.explanationPanel.resetForHistorySwitch();
+			ComputerPlayThread t = boardPanel.getMainFrame().getComputerPlayThreat();
+			t.makeMove = false;
+			t.startIt();
 		}
 	}
 	
@@ -309,10 +314,14 @@ public class HistoryPanel extends JPanel
 		
 		public void mousePressed(MouseEvent e)
 		{
-			boardPanel.getMainFrame().setHumanPlay();
-			history.select(number);
-			ComputerPlayThread t = boardPanel.getMainFrame().getComputerPlayThreat();
-			t.stopIt();
+			if (!boardPanel.getXaiPlay()){
+				boardPanel.getMainFrame().setHumanPlay();
+				history.select(number);
+				ComputerPlayThread t = boardPanel.getMainFrame().getComputerPlayThreat();
+				t.stopIt();
+			} else {
+				history.select(number);
+			}
 		}
 		
 		public void mouseExited(MouseEvent e)
