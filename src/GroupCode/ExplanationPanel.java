@@ -30,6 +30,24 @@ public class ExplanationPanel extends JTextArea {
     private String explanation;
     HashMap<String, String> explanations = new HashMap<>();
 
+    HashMap<Integer, String> moveYmapping = new HashMap<>(){{
+       put(0, "A");
+       put(1, "B");
+       put(2, "C");
+       put(3, "D");
+       put(4, "E");
+       put(5, "F");
+       put(6, "G");
+       put(7, "H");
+       put(8, "I");
+       put(9, "J");
+       put(10, "K");
+       put(11, "L");
+       put(12, "M");
+       put(13, "N");
+       put(14, "O");
+    }};
+
 
     public ExplanationPanel(int xSizePanel, int ySizePanel){
         setPreferredSize(new Dimension(xSizePanel, ySizePanel));
@@ -124,8 +142,8 @@ public class ExplanationPanel extends JTextArea {
         }
 
         ex += "MCTS Calculated move: Move " + bestMove + "\n";
-        ex += "MCTS Move Location: x=" + bestX  + ", y=" + bestY + "\n";
-        ex += "Current Location: x=" + boardX + ", y=" + boardY + "\n\n";
+        ex += "MCTS Move Location: " + moveYmapping.get(bestX) + (bestY+1) + "\n";
+        ex += "Current Location: " + moveYmapping.get(boardX) + (boardY+1) + "\n\n";
 
         boolean debug = false;
         if (debug){
