@@ -76,24 +76,24 @@ public class ExplanationPanel extends JTextArea {
     }
 
     private void generateExplanationMap() {
-        explanations.put("numRemovedCells", "This move removes a lot of cells");
-        explanations.put("numRemovedColumns", "This move will shift the board to the left");
+        explanations.put("numRemovedCells", "%s removes a lot of cells");
+        explanations.put("numRemovedColumns", "%s will shift the board to the left");
         //explanations.put("color", "This move removes a lot of cells");
-        explanations.put("connectionsDestroyed", "This move preserves a lot of the connections on the board now");
-        explanations.put("connectionsCreated", "This move creates a lot of new connections");
-        explanations.put("moveColumn", "This move is further to the left");
-        explanations.put("moveHeight", "This move is high up");
-        explanations.put("avgClusterSize", "This move will increase the average cluster's size");
-        explanations.put("largestClusterSize", "This move will create a big cluster");
-        explanations.put("numCluster2", "This move will result in a board with a lot of clusters of 2 tiles");
-        explanations.put("numCluster3", "This move will result in a board with a lot of clusters of 3 tiles");
-        explanations.put("numCluster4", "This move will result in a board with a lot of clusters of 4 tiles");
-        explanations.put("numCluster5", "This move will result in a board with a lot of clusters of 5 tiles");
-        explanations.put("numCluster6", "This move will result in a board with a lot of clusters of 6 tiles");
-        explanations.put("numCluster7plus", "This move will create a board with a lot of clusters of 7 or more tiles");
-        explanations.put("avgColHeight", "This move will result in a board that is lower on average");
-        explanations.put("highestColumn", "This move will decrease the height of the tallest column");
-        explanations.put("avgNumColorsPerColumn", "This move causes the number of colors per column to be lower");
+        explanations.put("connectionsDestroyed", "%s preserves a lot of the connections on the board now");
+        explanations.put("connectionsCreated", "%s creates a lot of new connections");
+        explanations.put("moveColumn", "%s is further to the left");
+        explanations.put("moveHeight", "%s is high up");
+        explanations.put("avgClusterSize", "%s will increase the average cluster's size");
+        explanations.put("largestClusterSize", "%s will create a big cluster");
+        explanations.put("numCluster2", "%s will result in a board with a lot of clusters of 2 tiles");
+        explanations.put("numCluster3", "%s will result in a board with a lot of clusters of 3 tiles");
+        explanations.put("numCluster4", "%s will result in a board with a lot of clusters of 4 tiles");
+        explanations.put("numCluster5", "%s will result in a board with a lot of clusters of 5 tiles");
+        explanations.put("numCluster6", "%s will result in a board with a lot of clusters of 6 tiles");
+        explanations.put("numCluster7plus", "%s will create a board with a lot of clusters of 7 or more tiles");
+        explanations.put("avgColHeight", "%s will result in a board that is lower on average");
+        explanations.put("highestColumn", "%s will decrease the height of the tallest column");
+        explanations.put("avgNumColorsPerColumn", "%s causes the number of colors per column to be lower");
     }
 
     @Override
@@ -148,31 +148,37 @@ public class ExplanationPanel extends JTextArea {
 
         if (SameGameBoard.legalMove(boardPanel.getPosition(), boardPanel.getXDim(), boardPanel.getYDim(), boardX, boardY)) {
             ex += "Explanation for Move " + moveID + ": \n";
-            //ex += "Sims for this move: " + moveNodePairs.get(moveID).simulations +"\n";
-            ex += "Score for this move: " + moveNodePairs.get(moveID).topScore + "\n\n";
-            ex += "Why is this move good?\n";
-//            ex += "----------------\n";
-//            ex += "Feature Scores for this move: \n";
-            String bestFeatureName = "";
+            ex += "MCTS thinks this move will lead to a final score of: " + moveNodePairs.get(moveID).average + "\n\n";
+            ex += "---------------------------------------------\n\n";
+            ex += "What is good about this move?\n";
+
+            String bestFeatureExplanation = "";
             double bestScore = 0;
             for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
                 if(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key)  > bestScore){
                     bestScore = nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
-                    bestFeatureName = explanations.get(key);
+                    bestFeatureExplanation = explanations.get(key);
                 }
             }
-            ex += bestFeatureName + "\n\n";
+            bestFeatureExplanation = String.format(bestFeatureExplanation, "This move");
+            ex += bestFeatureExplanation + "\n\n";
 
-            bestFeatureName = "";
+            ex += "What is better about MCTS's move?\n";
+            String mctsExplanation = "";
             bestScore = 0;
             for (String key : nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).keySet()){
                 if(nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) > bestScore){
                     bestScore = nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
-                    bestFeatureName = key;
+                    mctsExplanation = explanations.get(key);
+                    System.out.println(explanations.get(key));
                 }
             }
-            ex += "Biggest diff w/ MCTS: " + bestFeatureName + "\n";
-            ex += "Difference in Score: " + bestScore + "\n";
+            mctsExplanation = String.format(mctsExplanation, "MCTS's move");
+            ex += mctsExplanation + "\n";
+            ex += "This move doesn't do this as well";
+
+//            ex += "Biggest diff w/ MCTS: " + bestFeatureExplanation + "\n";
+//            ex += "Difference in Score: " + bestScore + "\n";
 
             if (debug){
                 if (nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID) != null){
