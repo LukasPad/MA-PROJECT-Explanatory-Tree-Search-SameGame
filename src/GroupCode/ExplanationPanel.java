@@ -28,6 +28,8 @@ public class ExplanationPanel extends JTextArea {
     private HashMap<String, Float> featureImportanceLookupTable;
 
     private String explanation;
+    HashMap<String, String> explanations = new HashMap<>();
+
 
     public ExplanationPanel(int xSizePanel, int ySizePanel){
         setPreferredSize(new Dimension(xSizePanel, ySizePanel));
@@ -73,6 +75,27 @@ public class ExplanationPanel extends JTextArea {
         }
     }
 
+    private void generateExplanationMap() {
+        explanations.put("numRemovedCells", "This move removes a lot of cells");
+        explanations.put("numRemovedColumns", "This move will shift the board to the left");
+        //explanations.put("color", "This move removes a lot of cells");
+        explanations.put("connectionsDestroyed", "This move preserves a lot of the connections on the board now");
+        explanations.put("connectionsCreated", "This move creates a lot of new connections");
+        explanations.put("moveColumn", "This move is further to the left");
+        explanations.put("moveHeight", "This move is high up");
+        explanations.put("avgClusterSize", "This move will increase the average cluster's size");
+        explanations.put("largestClusterSize", "This move will create a big cluster");
+        explanations.put("numCluster2", "This move will result in a board with a lot of clusters of 2 tiles");
+        explanations.put("numCluster3", "This move will result in a board with a lot of clusters of 3 tiles");
+        explanations.put("numCluster4", "This move will result in a board with a lot of clusters of 4 tiles");
+        explanations.put("numCluster5", "This move will result in a board with a lot of clusters of 5 tiles");
+        explanations.put("numCluster6", "This move will result in a board with a lot of clusters of 6 tiles");
+        explanations.put("numCluster7plus", "This move will create a board with a lot of clusters of 7 or more tiles");
+        explanations.put("avgColHeight", "This move will result in a board that is lower on average");
+        explanations.put("highestColumn", "This move will decrease the height of the tallest column");
+        explanations.put("avgNumColorsPerColumn", "This move causes the number of colors per column to be lower");
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -89,7 +112,7 @@ public class ExplanationPanel extends JTextArea {
 
     private String getExplanation(int boardX, int boardY) {
         String ex = "";
-        ex += "MCTS simulations: " + bot.totalSimulations + "\n";
+        //ex += "MCTS simulations: " + bot.totalSimulations + "\n";
 
         int bestX = 0;
         int bestY = 0;
@@ -125,19 +148,20 @@ public class ExplanationPanel extends JTextArea {
 
         if (SameGameBoard.legalMove(boardPanel.getPosition(), boardPanel.getXDim(), boardPanel.getYDim(), boardX, boardY)) {
             ex += "Explanation for Move " + moveID + ": \n";
-            ex += "Sims for this move: " + moveNodePairs.get(moveID).simulations +"\n";
-            ex += "Score for this move: " + moveNodePairs.get(moveID).topScore + "\n";
-            ex += "----------------\n";
-            ex += "Feature Scores for this move: \n";
+            //ex += "Sims for this move: " + moveNodePairs.get(moveID).simulations +"\n";
+            ex += "Score for this move: " + moveNodePairs.get(moveID).topScore + "\n\n";
+            ex += "Why is this move good?\n";
+//            ex += "----------------\n";
+//            ex += "Feature Scores for this move: \n";
             String bestFeatureName = "";
             double bestScore = 0;
             for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
                 if(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key)  > bestScore){
                     bestScore = nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
-                    bestFeatureName = key;
+                    bestFeatureName = explanations.get(key);
                 }
             }
-            ex += "Best Feature: " + bestFeatureName + "\n\n";
+            ex += bestFeatureName + "\n\n";
 
             bestFeatureName = "";
             bestScore = 0;
@@ -148,12 +172,14 @@ public class ExplanationPanel extends JTextArea {
                 }
             }
             ex += "Biggest diff w/ MCTS: " + bestFeatureName + "\n";
-            ex += "Difference in Score: " + bestScore;
+            ex += "Difference in Score: " + bestScore + "\n";
 
-            if (nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID) != null){
-                for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
-                    ex += key + ": " + nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) + "\n";
+            if (debug){
+                if (nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID) != null){
+                    for (String key : nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).keySet()){
+                        ex += key + ": " + nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) + "\n";
 
+                    }
                 }
             }
 
@@ -185,19 +211,7 @@ public class ExplanationPanel extends JTextArea {
             }
         }
 
-        System.out.print("Moves: [");
-        for (Cluster move : moves){
-            System.out.print(move.ID + ", ");
-        }
-        System.out.print("]");
-        System.out.println();
-
-        System.out.print("Moves in nodeFeatureScores: [");
-        for (int move : nodeFeatureScores.keySet()){
-            System.out.print(move + ", ");
-        }
-        System.out.print("]");
-        System.out.println();
+        generateExplanationMap();
 
         return;
     }
