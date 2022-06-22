@@ -123,7 +123,7 @@ public class ExplanationPanel extends JTextArea {
     }
 
     public void updateExplanation(int boardX, int boardY) {
-        if (moves == null){
+        if (moves != null){
             // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
             explanation = getExplanation(boardX, boardY);
             this.repaint();
