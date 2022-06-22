@@ -4,12 +4,10 @@ import OldCode.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.List;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -64,7 +62,7 @@ public class ExplanationPanel extends JTextArea {
         featureImportanceLookupTable = new HashMap<>();
         JSONParser parser = new JSONParser();
         try {
-            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs2.json"));
+            JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs4.json"));
             featureImportanceLookupTable = new HashMap<>() {{
                 put("gameScore", (float) (double) featureValues.get("score"));
                 put("moveNumber", (float) (double) featureValues.get("Move number"));
@@ -97,23 +95,23 @@ public class ExplanationPanel extends JTextArea {
         HashMap<String, String> innerMap = new HashMap<>();
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s doesn't empty any columns");
-        innerMap.put("negative", "%s would remove a column");
+        innerMap.put("positive", "%s removes less columns");
+        innerMap.put("negative", "%s removes more columns");
         explanations.put("numRemovedColumns", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s removes a lot of cells");
-        innerMap.put("negative", "%s doesn't remove many cells");
+        innerMap.put("positive", "%s removes a bigger cluster");
+        innerMap.put("negative", "%s removes a smaller cluster");
         explanations.put("numRemovedCells", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s preserves a lot of the connections on the board now");
-        innerMap.put("negative", "%s destroys a lot of the connections on the board now");
+        innerMap.put("positive", "%s destroys less of the connections on the board");
+        innerMap.put("negative", "%s destroys more the connections on the board");
         explanations.put("connectionsDestroyed", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s creates a lot of new connections");
-        innerMap.put("negative", "%s doesn't create many new connections");
+        innerMap.put("positive", "%s creates more new connections");
+        innerMap.put("negative", "%s creates less new connections");
         explanations.put("connectionsCreated", innerMap);
 
         innerMap = new HashMap<>();
@@ -127,58 +125,58 @@ public class ExplanationPanel extends JTextArea {
         explanations.put("moveHeight", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will increase the average cluster's size");
-        innerMap.put("negative", "%s will make the average cluster size be smaller");
+        innerMap.put("positive", "%s will result in a board with bigger clusters on average");
+        innerMap.put("negative", "%s will result in a board with smaller clusters on average");
         explanations.put("avgClusterSize", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will make/keep the biggest cluster large");
-        innerMap.put("negative", "%s will make the largest cluster smaller");
+        innerMap.put("positive", "%s will ensure a bigger biggest cluster");
+        innerMap.put("negative", "%s will only ensure a smaller biggest cluster");
         explanations.put("largestClusterSize", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board with a lot of clusters of 2 tiles");
+        innerMap.put("positive", "%s will result in a board with more clusters of 2 tiles");
         innerMap.put("negative", "%s will result in a board with less clusters of 2 tiles");
         explanations.put("numCluster2", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board with a lot of clusters of 3 tiles");
+        innerMap.put("positive", "%s will result in a board with more clusters of 3 tiles");
         innerMap.put("negative", "%s will result in a board with less clusters of 3 tiles");
         explanations.put("numCluster3", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board with a lot of clusters of 4 tiles");
+        innerMap.put("positive", "%s will result in a board with more clusters of 4 tiles");
         innerMap.put("negative", "%s will result in a board with less clusters of 4 tiles");
         explanations.put("numCluster4", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board with a lot of clusters of 5 tiles");
+        innerMap.put("positive", "%s will result in a board with more clusters of 5 tiles");
         innerMap.put("negative", "%s will result in a board with less clusters of 5 tiles");
         explanations.put("numCluster5", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board with a lot of clusters of 6 tiles");
+        innerMap.put("positive", "%s will result in a board with more clusters of 6 tiles");
         innerMap.put("negative", "%s will result in a board with less clusters of 6 tiles");
         explanations.put("numCluster6", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board with a lot of clusters of 7+ tiles");
+        innerMap.put("positive", "%s will result in a board with more clusters of 7+ tiles");
         innerMap.put("negative", "%s will result in a board with less clusters of 7+ tiles");
         explanations.put("numCluster7plus", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will result in a board that is higher on average");
-        innerMap.put("negative", "%s will result in a lower height board");
+        innerMap.put("positive", "%s will result in a board that has higher columns on average");
+        innerMap.put("negative", "%s will result in a board that has lower columns on average");
         explanations.put("avgColHeight", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s will keep the tallest column tall");
-        innerMap.put("negative", "%s will make the tallest column shorter");
+        innerMap.put("positive", "%s will result in a board with the tallest column being taller");
+        innerMap.put("negative", "%s will result in a board with the tallest column being shorter");
         explanations.put("highestColumn", innerMap);
 
         innerMap = new HashMap<>();
-        innerMap.put("positive", "%s causes the number of colors per column to stay the same");
-        innerMap.put("negative", "%s causes the number of colors per column to decrease");
+        innerMap.put("positive", "%s keeps the number of colors per column higher");
+        innerMap.put("negative", "%s causes the number of colors per column to be lower");
         explanations.put("avgNumColorsPerColumn", innerMap);
     }
 
@@ -209,7 +207,6 @@ public class ExplanationPanel extends JTextArea {
             }
         }
 
-        ex += "MCTS Calculated move: Move " + bestMove + "\n";
         ex += "MCTS Move Location: " + moveYmapping.get(bestX) + (bestY+1) + "\n";
         ex += "Current Location: " + moveYmapping.get(boardX) + (boardY+1) + "\n\n";
 
@@ -233,52 +230,75 @@ public class ExplanationPanel extends JTextArea {
         }
 
         if (SameGameBoard.legalMove(boardPanel.getPosition(), boardPanel.getXDim(), boardPanel.getYDim(), boardX, boardY)) {
-            ex += "Explanation for Move " + moveID + ": \n";
-            ex += "MCTS thinks this move will lead to a final score of: " + moveNodePairs.get(moveID).average + "\n\n";
-            ex += "---------------------------------------------\n\n";
+            ex += "The highest score MCTS was able to achieve from this move on is: " + moveNodePairs.get(moveID).topScore + "\n";
+            ex += "---------------------------------------------\n";
 
-            Map sortedMap = MapUtil.sortByValue(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID));
+            // Move explanations
+            Map<String, Float> sortedMap = MapUtil.sortByValue(nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID));
 
             ArrayList<String> sortedMoveExplanationsPositive = new ArrayList<>();
             ArrayList<String> sortedMoveExplanationsNegative = new ArrayList<>();
-            ArrayList<String> keys = new ArrayList<>();
+            HashMap<Integer, Float> keysPos = new HashMap<>();
+            HashMap<Integer, Float> keysNeg = new HashMap<>();
             sortedMap.forEach((K, V) -> {
-                if((float) V >= 0.0){
-                    sortedMoveExplanationsPositive.add(explanations.get((String) K).get("positive"));
-                }else if((float) V < 0.0){
-                    sortedMoveExplanationsNegative.add(0, explanations.get((String) K).get("negative"));
+                if(V > 0.015){
+                    keysPos.put(sortedMoveExplanationsPositive.size(), V);
+                    sortedMoveExplanationsPositive.add(explanations.get(K).get("positive"));
+                }else if(V < -0.015){
+                    keysNeg.put(sortedMoveExplanationsNegative.size(), V);
+                    sortedMoveExplanationsNegative.add(explanations.get(K).get("negative"));
                 }
-                keys.add((String) K);
             });
 
-            ex += "What is good about this move?\n";
-            for (int i = 0; i < 3; i++) {
-                ex += "- " + String.format(sortedMoveExplanationsPositive.get(i), "This move") + "\n";
-            }
-            ex += "What is bad about this move?\n";
-            for (int i = 0; i <3; i++) {
-                ex += "- " + String.format(sortedMoveExplanationsNegative.get(i), "This move") + "\n";
+            ex += "What is good about this move compared to other moves?\n";
+            for (int i = 0; i < Math.min(5, sortedMoveExplanationsPositive.size()); i++) {
+                ex += "- " + String.format(sortedMoveExplanationsPositive.get(i), "This move") + " (" + Math.round(keysPos.get(i) * 1000) / 1000.0 + ")" + "\n";
             }
 
-            System.out.println("----------------------------------------");
-
-            for (String key : keys) {
-                System.out.println(key + ": " + nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key));
+            ex += "\n";
+            ex += "What is bad about this move compared to other moves?\n";
+            for (int i = 0; i < Math.min(5, sortedMoveExplanationsNegative.size()); i++) {
+                ex += "- " + String.format(sortedMoveExplanationsNegative.get(sortedMoveExplanationsNegative.size() - (i+1)), "This move") + " (" + Math.round(keysNeg.get(sortedMoveExplanationsNegative.size() - (i+1)) * 1000) / 1000.0 + ")" + "\n";
             }
-            
+            ex += "\n";
 
-            ex += "What is better about MCTS's move?\n";
-            String mctsExplanation = "";
-            float bestScore = 0;
-            for (String key : nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).keySet()){
-                if(nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) > bestScore){
-                    bestScore = nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
-                    mctsExplanation = explanations.get(key).get("positive");
+
+            // Move vs best move explanations
+            if (bestMove != moveID){
+                ex += "\n";
+                HashMap<String, Float> nodeFeatureScoresMCTSDiff = new HashMap<>();
+                nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).forEach((feature, value) -> {
+                    nodeFeatureScoresMCTSDiff.put(feature, nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(feature) - value);
+                });
+
+                Map<String, Float> sortedMapMCTS = MapUtil.sortByValue(nodeFeatureScoresMCTSDiff);
+
+                ArrayList<String> sortedMCTSExplanationsPositive = new ArrayList<>();
+                ArrayList<String> sortedMCTSExplanationsNegative = new ArrayList<>();
+                HashMap<Integer, Float> keysMCTSPos = new HashMap<>();
+                HashMap<Integer, Float> keysMCTSNeg = new HashMap<>();
+                sortedMapMCTS.forEach((K, V) -> {
+                    if(V > 0.015){
+                        keysMCTSPos.put(sortedMCTSExplanationsPositive.size(), V);
+                        sortedMCTSExplanationsPositive.add(explanations.get(K).get("positive"));
+                    }else if(V < -0.015){
+                        keysMCTSNeg.put(sortedMCTSExplanationsNegative.size(), V);
+                        sortedMCTSExplanationsNegative.add(explanations.get(K).get("positive"));
+                    }
+                });
+
+                ex += "What is good about MCTS's move compared to this move?\n";
+                for (int i = 0; i < Math.min(5, sortedMCTSExplanationsPositive.size()); i++) {
+                    ex += "- " + String.format(sortedMCTSExplanationsPositive.get(i), "MCTS's move") + " (" + Math.round(keysMCTSPos.get(i) * 1000) / 1000.0 + ")" + "\n";
                 }
+                ex += "\n";
+
+                ex += "What is good about this move compared to MCTS's move?\n";
+                for (int i = 0; i < Math.min(5, sortedMCTSExplanationsNegative.size()); i++) {
+                    ex += "- " + String.format(sortedMCTSExplanationsNegative.get(sortedMCTSExplanationsNegative.size() - (i+1)), "This move") + " (" + Math.round(keysMCTSNeg.get(sortedMCTSExplanationsNegative.size() - (i+1)) * 1000) / -1000.0 + ")" + "\n";
+                }
+                ex += "\n";
             }
-            mctsExplanation = String.format(mctsExplanation, "MCTS's move");
-            ex += mctsExplanation + "\n";
-            ex += "This move doesn't do this as well";
 
 //            ex += "Biggest diff w/ MCTS: " + bestFeatureExplanation + "\n";
 //            ex += "Difference in Score: " + bestScore + "\n";
@@ -355,9 +375,9 @@ public class ExplanationPanel extends JTextArea {
             HashMap<String, Float> nodeScores = new HashMap<>();
 
             // GameState features
-            float gameScore = gameStates.getState(nodeID).getScore();
-            nodeScores.put("gameScore", gameScore);
-            avgValues.put("gameScore", avgValues.getOrDefault("gameScore", 0.0f) + gameScore / (float) nodeIDs.size());
+            // float gameScore = gameStates.getState(nodeID).getScore();
+            // nodeScores.put("gameScore", gameScore);
+            // avgValues.put("gameScore", avgValues.getOrDefault("gameScore", 0.0f) + gameScore / (float) nodeIDs.size());
 
             // Move features
             int numRemovedCells = moves.getMove(nodeID).getNumRemovedCells();
