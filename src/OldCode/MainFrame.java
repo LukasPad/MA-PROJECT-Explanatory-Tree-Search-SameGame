@@ -96,8 +96,9 @@ public class MainFrame extends JFrame
 		HistoryPanel h = new HistoryPanel(this);
 
 		// xai
-		explanationPanel = new ExplanationPanel();
-		explanationPanel.setSize(300, 300);
+		int exPanelWidth = 500;
+		explanationPanel = new ExplanationPanel(exPanelWidth, 300);
+		explanationPanel.setSize(exPanelWidth, 300);
 		JPanel left = new JPanel();
 		left.setLayout(new BorderLayout());
 		left.add(explanationPanel, BorderLayout.CENTER);
@@ -128,7 +129,7 @@ public class MainFrame extends JFrame
 		Toolkit tool = Toolkit.getDefaultToolkit();
 		Dimension d = tool.getScreenSize();
 		
-		this.setPreferredSize(new Dimension(1000,600));
+		this.setPreferredSize(new Dimension(700 + exPanelWidth,600));
 		this.setBounds(((int)(d.getWidth()/2))-350, ((int)(d.getHeight()/2))-300, 1000, 600);
 		
 		JMenuBar menuBar;

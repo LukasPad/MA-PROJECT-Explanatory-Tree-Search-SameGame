@@ -16,9 +16,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class ExplanationPanel extends JTextArea {
-    private int xSizePanel = 300;
-    private int ySizePanel = 300;
-
     private int xDim, yDim, nodeID;
     private BoardPanel boardPanel;
     private MCTSPlayer bot;
@@ -32,7 +29,7 @@ public class ExplanationPanel extends JTextArea {
 
     private String explanation;
 
-    public ExplanationPanel(){
+    public ExplanationPanel(int xSizePanel, int ySizePanel){
         setPreferredSize(new Dimension(xSizePanel, ySizePanel));
         explanation = "XAI not enabled!";
         setEditable(false);
@@ -49,7 +46,7 @@ public class ExplanationPanel extends JTextArea {
         try {
             JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs.json"));
             featureImportanceLookupTable = new HashMap<>() {{
-                // put("mctsScore", (float) (double) featureValues.get("mctsScore"));
+                put("mctsScore", (float) (double) featureValues.get("mctsScore"));
                 put("moveNumber", (float) (double) featureValues.get("Move number"));
                 put("nodeID", (float) (double) featureValues.get("nodeID"));
                 put("numRemovedCells", (float) (double) featureValues.get("numRemovedCells"));
@@ -79,8 +76,6 @@ public class ExplanationPanel extends JTextArea {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        xSizePanel=this.getWidth();
-        ySizePanel=this.getHeight();
         this.setText(explanation);
     }
 
@@ -238,12 +233,12 @@ public class ExplanationPanel extends JTextArea {
         for (Integer nodeID : nodeIDs) {
             HashMap<String, Float> nodeScores = new HashMap<>();
 
-            // nodeScores.put("mctsScore", (float) mctsScore);
-            // nodeScores.put("nodeID", (float) nodeID);
+            // GameState features
+            float mctsScore = gameStates.getState(nodeID).getScore();
+            nodeScores.put("mctsScore", mctsScore);
+            avgValues.put("mctsScore", avgValues.getOrDefault("mctsScore", 0.0f) + mctsScore / (float) nodeIDs.size());
 
             // Move features
-            // TODO: what is moveNumber? nodeScores.put("moveNumber", (float) moveNumber);
-
             int numRemovedCells = moves.getMove(nodeID).getNumRemovedCells();
             nodeScores.put("numRemovedCells", (float) numRemovedCells);
             avgValues.put("numRemovedCells", avgValues.getOrDefault("numRemovedCells", 0.0f) + numRemovedCells / (float) nodeIDs.size());
@@ -319,7 +314,7 @@ public class ExplanationPanel extends JTextArea {
 
         nodeFeatureScores.forEach((i, nodeScores) -> {
             nodeScores.forEach((feature, value) -> {
-                nodeScores.put(feature, ((value/* - avgValues.get(feature)*/) / (avgValues.get(feature) + 1)) * featureImportanceLookupTable.get(feature));
+                nodeScores.put(feature, ((value - avgValues.get(feature)) / (avgValues.get(feature) + 1)) * featureImportanceLookupTable.get(feature));
             });
         });
     }

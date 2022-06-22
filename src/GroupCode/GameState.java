@@ -15,6 +15,10 @@ public class GameState extends Feature{
         this.nodeID = nodeID;
     }
 
+    public float getScore() {
+        return score;
+    }
+
     @Override
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
