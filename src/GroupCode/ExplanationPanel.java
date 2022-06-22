@@ -243,8 +243,6 @@ public class ExplanationPanel extends JTextArea {
 
             // Move features
             // TODO: what is moveNumber? nodeScores.put("moveNumber", (float) moveNumber);
-            // TODO: split up colors into boolean? yellow (yes/no) => more significant correlations maybe
-            //  nodeScores.put("color", (float) color);
 
             int numRemovedCells = moves.getMove(nodeID).getNumRemovedCells();
             nodeScores.put("numRemovedCells", (float) numRemovedCells);
@@ -334,9 +332,9 @@ public class ExplanationPanel extends JTextArea {
         int nID = nodeID;
         n.nodeID = nID;
         if (parentID != -1) {
-            featureCollector.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.topScore, nID);
+            featureCollector.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.average, nID, n.topScore);
         } else {
-            featureCollector.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.topScore, nID);
+            featureCollector.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.average, nID, n.topScore);
         }
         featureCollector.addEdge(nID, parentID);
 
@@ -359,7 +357,7 @@ public class ExplanationPanel extends JTextArea {
             if (n.child != null){
                 UCTEdge bestChild = n.child;
                 for (UCTEdge loop=n.child;loop!=null;loop=loop.sibling){
-                    if (loop.topScore > bestChild.topScore){
+                    if (loop.average > bestChild.average){
                         bestChild = loop;
                     }
                 }

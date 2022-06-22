@@ -73,11 +73,13 @@ public class FeatureCollector {
         nodeEdges.clear();
     }
 
-    public void findGameFeatures(byte[] searchSpace, byte[] prevSearchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID) {
+    public void findGameFeatures(byte[] searchSpace, byte[] prevSearchSpace, int xDim, int yDim, int gameStep, int move, float mctsScore, int nodeID, float gameScore) {
         for (BoardFeatures gameFeature : gameFeatures.values()) {
             if (gameFeature instanceof Moves){
                 gameFeature.findFeatures(prevSearchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
-            }else{
+            } else if (gameFeature instanceof GameStates) {
+                gameFeature.findFeatures(prevSearchSpace, xDim, yDim, gameStep, move, gameScore, nodeID);
+            } else {
                 gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
             }
         }

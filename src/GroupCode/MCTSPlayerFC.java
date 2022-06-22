@@ -63,11 +63,11 @@ public class MCTSPlayerFC extends MCTSPlayer {
 
         if (parentID != -1)
         {
-            fc_tree.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.average, nID);
+            fc_tree.findGameFeatures(pos, prevPos, xDim, yDim, depth, move, n.average, nID, n.topScore);
         }
         else
         {
-            fc_tree.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.average, nID);
+            fc_tree.findGameFeatures(pos, null, xDim, yDim, depth, -1, n.average, nID, n.topScore);
         }
         fc_tree.addEdge(nID, parentID);
 
