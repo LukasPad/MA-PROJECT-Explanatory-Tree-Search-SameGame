@@ -58,6 +58,7 @@ public class ExplanationPanel extends JTextArea {
         featureCollector = new FeatureCollector();
         nodeID=0;
         importFeatureImportance();
+        generateExplanationMap();
     }
 
     private void importFeatureImportance() {
@@ -94,6 +95,7 @@ public class ExplanationPanel extends JTextArea {
     }
 
     private void generateExplanationMap() {
+        explanations.put("gameScore", "%s will result in a higher score");
         explanations.put("numRemovedCells", "%s removes a lot of cells");
         explanations.put("numRemovedColumns", "%s will shift the board to the left");
         //explanations.put("color", "This move removes a lot of cells");
@@ -121,11 +123,11 @@ public class ExplanationPanel extends JTextArea {
     }
 
     public void updateExplanation(int boardX, int boardY) {
-        // TODO: update to new json file
-
-        // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
-        explanation = getExplanation(boardX, boardY);
-        this.repaint();
+        if (moves == null){
+            // (relevance ranking => score) or (feature rules) => scoring/bad/tactical move
+            explanation = getExplanation(boardX, boardY);
+            this.repaint();
+        }
     }
 
     private String getExplanation(int boardX, int boardY) {
@@ -188,7 +190,6 @@ public class ExplanationPanel extends JTextArea {
                 if(nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key) > bestScore){
                     bestScore = nodeFeatureScores.get(moveNodePairs.get(bestMove).nodeID).get(key) - nodeFeatureScores.get(moveNodePairs.get(moveID).nodeID).get(key);
                     mctsExplanation = explanations.get(key);
-                    System.out.println(explanations.get(key));
                 }
             }
             mctsExplanation = String.format(mctsExplanation, "MCTS's move");
@@ -234,8 +235,6 @@ public class ExplanationPanel extends JTextArea {
                 }
             }
         }
-
-        generateExplanationMap();
 
         return;
     }
