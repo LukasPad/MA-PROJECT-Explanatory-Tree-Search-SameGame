@@ -78,7 +78,7 @@ public class FeatureCollector {
             if (gameFeature instanceof Moves){
                 gameFeature.findFeatures(prevSearchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
             } else if (gameFeature instanceof GameStates) {
-                gameFeature.findFeatures(prevSearchSpace, xDim, yDim, gameStep, move, gameScore, nodeID);
+                gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, gameScore, nodeID);
             } else {
                 gameFeature.findFeatures(searchSpace, xDim, yDim, gameStep, move, mctsScore, nodeID);
             }

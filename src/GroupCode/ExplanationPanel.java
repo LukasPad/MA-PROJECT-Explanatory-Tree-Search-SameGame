@@ -48,7 +48,7 @@ public class ExplanationPanel extends JTextArea {
         try {
             JSONObject featureValues = (JSONObject) parser.parse(new FileReader("src/data/corr_coeffs.json"));
             featureImportanceLookupTable = new HashMap<>() {{
-                put("mctsScore", (float) (double) featureValues.get("mctsScore"));
+                put("gameScore", (float) (double) featureValues.get("score"));
                 put("moveNumber", (float) (double) featureValues.get("Move number"));
                 put("nodeID", (float) (double) featureValues.get("nodeID"));
                 put("numRemovedCells", (float) (double) featureValues.get("numRemovedCells"));
@@ -248,9 +248,9 @@ public class ExplanationPanel extends JTextArea {
             HashMap<String, Float> nodeScores = new HashMap<>();
 
             // GameState features
-            float mctsScore = gameStates.getState(nodeID).getScore();
-            nodeScores.put("mctsScore", mctsScore);
-            avgValues.put("mctsScore", avgValues.getOrDefault("mctsScore", 0.0f) + mctsScore / (float) nodeIDs.size());
+            float gameScore = gameStates.getState(nodeID).getScore();
+            nodeScores.put("gameScore", gameScore);
+            avgValues.put("gameScore", avgValues.getOrDefault("gameScore", 0.0f) + gameScore / (float) nodeIDs.size());
 
             // Move features
             int numRemovedCells = moves.getMove(nodeID).getNumRemovedCells();
